@@ -1,5 +1,7 @@
 package com.k3.examen.config;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -10,14 +12,15 @@ import java.sql.SQLException;
 public class DatabaseConnection {
 
     private static final String URL =System.getenv("DB_URL");
-    private static final String USERNAME =System.getenv("DB_USERNAME");
+    private static final String USER =System.getenv("DB_USERNAME");
     private static final String PASSWORD =System.getenv("DB_PASSWORD");
     private static final String DRIVER = "org.postgresql.Driver";
     private static Connection connection = null;
+
     public Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
         try {
-            connection=DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            connection=DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Connexion à la base de données réussie.");
         } catch (SQLException e) {
             System.err.println("Erreur de connexion : " + e.getMessage());
