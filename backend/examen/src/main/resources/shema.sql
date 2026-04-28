@@ -1,4 +1,4 @@
--- création base de donnée 
+-- création base de donnée
 CREATE database EventPlanner
 -- ADMIN (organisateurs authentifiés)
 CREATE TABLE admin (
@@ -14,7 +14,8 @@ CREATE TABLE event (
     description TEXT,
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP NOT NULL,
-    location VARCHAR(255)
+    location VARCHAR(255),
+    admin_id INT NOT NULL REFERENCES admin(id) ON DELETE CASCADE
 );
 
 -- ROOM (liée à un événement)

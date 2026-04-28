@@ -7,12 +7,20 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
       </profile>
+<<<<<<< HEAD
       <profile name="Annotation profile for examen" enabled="true">
+=======
+      <profile name="Annotation profile for federation-agri-backend" enabled="true">
+>>>>>>> InfraSpecification
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
+<<<<<<< HEAD
+=======
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
+>>>>>>> InfraSpecification
         </processorPath>
         <module name="examen" />
       </profile>
