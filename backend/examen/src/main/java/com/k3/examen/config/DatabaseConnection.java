@@ -14,7 +14,7 @@ public class DatabaseConnection {
     private static final String PASSWORD =System.getenv("DB_PASSWORD");
     private static final String DRIVER = "org.postgresql.Driver";
     private static Connection connection = null;
-    public Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
         try {
             connection=DriverManager.getConnection(URL, USERNAME, PASSWORD);
