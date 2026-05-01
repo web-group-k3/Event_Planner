@@ -1,5 +1,5 @@
 -- création base de donnée 
-CREATE database EventPlanner
+CREATE database EventPlanner;
 -- ADMIN (organisateurs authentifiés)
 CREATE TABLE admin (
     id SERIAL PRIMARY KEY,
