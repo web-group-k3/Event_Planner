@@ -26,6 +26,7 @@ public class AdminRepository {
                 admin.setPasswordHash(rs.getString("password_hash"));
                 return admin;
             }
+
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la recherche de l'admin: " + e.getMessage());
         }
