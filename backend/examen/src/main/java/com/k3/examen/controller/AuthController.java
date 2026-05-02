@@ -6,6 +6,8 @@ import com.k3.examen.dto.LoginResponse;
 import com.k3.examen.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -28,13 +30,17 @@ public class AuthController {
         LoginResponse response = authService.login(loginRequest);
         return ResponseEntity.ok(response);
     }
-
-    //  Me — retourne l'admin connecté (pour Dev 4)
     @GetMapping("/me")
-    public ResponseEntity<Map<String, String>> me(
-            @RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.substring(7);
-        String username = jwtUtil.extractUsername(token);
-        return ResponseEntity.ok(Map.of("username", username));
+    public ResponseEntity<?> getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails userDetails) {
+            return ResponseEntity.ok(Map.of(
+                    "username", userDetails.getUsername(),
+                    "authorities", userDetails.getAuthorities()
+            ));
+        }
+
+        return ResponseEntity.status(401).body("Non authentifié");
     }
 }
