@@ -6,6 +6,7 @@ import com.k3.examen.dto.LoginResponse;
 import com.k3.examen.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -30,17 +31,23 @@ public class AuthController {
         LoginResponse response = authService.login(loginRequest);
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principal instanceof UserDetails userDetails) {
-            return ResponseEntity.ok(Map.of(
-                    "username", userDetails.getUsername(),
-                    "authorities", userDetails.getAuthorities()
-            ));
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, Object>> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).build();
         }
 
-        return ResponseEntity.status(401).body("Non authentifié");
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        return ResponseEntity.ok(Map.of(
+                "username", userDetails.getUsername(),
+                "roles", userDetails.getAuthorities().stream()
+                        .map(authority -> authority.getAuthority())
+                        .toList(),
+                "authenticated", true
+        ));
     }
 }
