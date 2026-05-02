@@ -1,0 +1,863 @@
+openapi: 3.0.3
+info:
+  title: EventPlanner API
+  description: >
+    API REST pour la plateforme EventSync — gestion d'événements et engagement
+    des participants en temps réel.
+  version: 1.0.0
+  contact:
+    name: EventSync Team
+
+servers:
+  - url: http://localhost:8080/api
+    description: Serveur de développement local
+
+tags:
+  - name: Auth
+    description: Authentification des organisateurs
+  - name: Events
+    description: Gestion des événements
+  - name: Sessions
+    description: Gestion des sessions
+  - name: Rooms
+    description: Gestion des salles
+  - name: Speakers
+    description: Gestion des intervenants
+  - name: Questions
+    description: Questions et upvotes pendant les sessions
+
+# 
+# SECURITY
+# 
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
+  # SCHEMAS
+
+  schemas:
+
+    # AUTH
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          example: admin
+        password:
+          type: string
+          example: secret123
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    # EVENT
+    EventRequest:
+      type: object
+      required: [title, startDate, endDate]
+      properties:
+        title:
+          type: string
+          example: DevFest Antananarivo 2026
+        description:
+          type: string
+          example: La grande conférence tech de Madagascar
+        startDate:
+          type: string
+          format: date-time
+          example: 2026-06-15T08:00:00
+        endDate:
+          type: string
+          format: date-time
+          example: 2026-06-15T18:00:00
+        location:
+          type: string
+          example: Antananarivo, Madagascar
+
+    EventResponse:
+      allOf:
+        - $ref: '#/components/schemas/EventRequest'
+        - type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+
+    # ROOM
+    RoomRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          example: Salle A
+
+    RoomResponse:
+      allOf:
+        - $ref: '#/components/schemas/RoomRequest'
+        - type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            eventId:
+              type: integer
+              example: 1
+
+    # SPEAKER
+    SpeakerRequest:
+      type: object
+      required: [fullName]
+      properties:
+        fullName:
+          type: string
+          example: Rakoto Jean
+        photoUrl:
+          type: string
+          example: https://example.com/photo.jpg
+        bio:
+          type: string
+          example: Développeur fullstack passionné par le cloud.
+        links:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            twitter: https://twitter.com/rakoto
+            github: https://github.com/rakoto
+            website: https://rakoto.dev
+
+    SpeakerResponse:
+      allOf:
+        - $ref: '#/components/schemas/SpeakerRequest'
+        - type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            eventId:
+              type: integer
+              example: 1
+
+    # SESSION
+    SessionRequest:
+      type: object
+      required: [title, startTime, endTime, roomId]
+      properties:
+        title:
+          type: string
+          example: Introduction à Kubernetes
+        description:
+          type: string
+          example: Découvrez les bases de l'orchestration de conteneurs.
+        startTime:
+          type: string
+          format: date-time
+          example: 2026-06-15T09:00:00
+        endTime:
+          type: string
+          format: date-time
+          example: 2026-06-15T10:00:00
+        capacity:
+          type: integer
+          example: 100
+        roomId:
+          type: integer
+          example: 1
+        speakerIds:
+          type: array
+          items:
+            type: integer
+          example: [1, 2]
+
+    SessionResponse:
+      allOf:
+        - $ref: '#/components/schemas/SessionRequest'
+        - type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            eventId:
+              type: integer
+              example: 1
+            isLive:
+              type: boolean
+              example: true
+              description: >
+                true si l'heure actuelle est comprise entre startTime et endTime
+            room:
+              $ref: '#/components/schemas/RoomResponse'
+            speakers:
+              type: array
+              items:
+                $ref: '#/components/schemas/SpeakerResponse'
+
+    # QUESTION
+    QuestionRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          example: Quelle est la différence entre un Pod et un Deployment ?
+        authorName:
+          type: string
+          nullable: true
+          example: Sitraka
+          description: Optionnel — null si anonyme
+
+    QuestionResponse:
+      allOf:
+        - $ref: '#/components/schemas/QuestionRequest'
+        - type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            upvotes:
+              type: integer
+              example: 5
+            createdAt:
+              type: string
+              format: date-time
+              example: 2026-06-15T09:30:00
+            sessionId:
+              type: integer
+              example: 1
+
+    # ERRORS
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: Ressource introuvable
+        timestamp:
+          type: string
+          format: date-time
+
+# 
+# PATHS
+# 
+paths:
+
+  # ── AUTH ──────────────────────────────────
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Connexion organisateur
+      description: Retourne un token JWT valide pour les routes protégées.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Identifiants invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ── EVENTS ────────────────────────────────
+  /events:
+    get:
+      tags: [Events]
+      summary: Lister tous les événements
+      description: Accessible publiquement — pas d'authentification requise.
+      responses:
+        '200':
+          description: Liste des événements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventResponse'
+
+    post:
+      tags: [Events]
+      summary: Créer un événement
+      description: Réservé aux organisateurs authentifiés.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+      responses:
+        '201':
+          description: Événement créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /events/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      tags: [Events]
+      summary: Détail d'un événement
+      description: Accessible publiquement.
+      responses:
+        '200':
+          description: Détail de l'événement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '404':
+          description: Événement introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      tags: [Events]
+      summary: Modifier un événement
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+      responses:
+        '200':
+          description: Événement modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Événement introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [Events]
+      summary: Supprimer un événement
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Événement supprimé
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Événement introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ── ROOMS ─────────────────────────────────
+  /events/{eventId}/rooms:
+    parameters:
+      - name: eventId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      tags: [Rooms]
+      summary: Lister les salles d'un événement
+      description: Accessible publiquement.
+      responses:
+        '200':
+          description: Liste des salles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomResponse'
+
+    post:
+      tags: [Rooms]
+      summary: Créer une salle
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomRequest'
+      responses:
+        '201':
+          description: Salle créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomResponse'
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /events/{eventId}/rooms/{roomId}:
+    parameters:
+      - name: eventId
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    put:
+      tags: [Rooms]
+      summary: Modifier une salle
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomRequest'
+      responses:
+        '200':
+          description: Salle modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomResponse'
+        '404':
+          description: Salle introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [Rooms]
+      summary: Supprimer une salle
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Salle supprimée
+        '404':
+          description: Salle introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ── SPEAKERS ──────────────────────────────
+  /events/{eventId}/speakers:
+    parameters:
+      - name: eventId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      tags: [Speakers]
+      summary: Lister les intervenants d'un événement
+      description: Accessible publiquement.
+      responses:
+        '200':
+          description: Liste des intervenants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpeakerResponse'
+
+    post:
+      tags: [Speakers]
+      summary: Créer un intervenant
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpeakerRequest'
+      responses:
+        '201':
+          description: Intervenant créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakerResponse'
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /speakers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      tags: [Speakers]
+      summary: Page publique d'un intervenant
+      description: Accessible publiquement — affiche bio, photo, liens et sessions associées.
+      responses:
+        '200':
+          description: Détail de l'intervenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakerResponse'
+        '404':
+          description: Intervenant introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      tags: [Speakers]
+      summary: Modifier un intervenant
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpeakerRequest'
+      responses:
+        '200':
+          description: Intervenant modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakerResponse'
+        '404':
+          description: Intervenant introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [Speakers]
+      summary: Supprimer un intervenant
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Intervenant supprimé
+        '404':
+          description: Intervenant introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ── SESSIONS ──────────────────────────────
+  /events/{eventId}/sessions:
+    parameters:
+      - name: eventId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      tags: [Sessions]
+      summary: Lister les sessions d'un événement
+      description: Accessible publiquement. Chaque session inclut le flag isLive.
+      parameters:
+        - name: roomId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filtrer les sessions par salle
+        - name: live
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Retourner uniquement les sessions en cours
+      responses:
+        '200':
+          description: Liste des sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionResponse'
+
+    post:
+      tags: [Sessions]
+      summary: Créer une session
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionRequest'
+      responses:
+        '201':
+          description: Session créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /events/{eventId}/sessions/{sessionId}:
+    parameters:
+      - name: eventId
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      tags: [Sessions]
+      summary: Détail d'une session
+      description: Accessible publiquement. Inclut intervenants et questions si live.
+      responses:
+        '200':
+          description: Détail de la session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '404':
+          description: Session introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      tags: [Sessions]
+      summary: Modifier une session
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionRequest'
+      responses:
+        '200':
+          description: Session modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [Sessions]
+      summary: Supprimer une session
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Session supprimée
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # ── QUESTIONS ─────────────────────────────
+  /sessions/{sessionId}/questions:
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    get:
+      tags: [Questions]
+      summary: Lister les questions d'une session
+      description: >
+        Accessible publiquement. Questions triées par upvotes décroissants.
+        Disponible uniquement si la session est live.
+      responses:
+        '200':
+          description: Liste des questions triées par upvotes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuestionResponse'
+        '403':
+          description: La session n'est pas en cours (not live)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags: [Questions]
+      summary: Poser une question
+      description: >
+        Accessible publiquement sans authentification.
+        Uniquement possible si la session est live.
+        Le champ authorName est optionnel (anonyme si absent).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+      responses:
+        '201':
+          description: Question soumise
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResponse'
+        '403':
+          description: La session n'est pas en cours (not live)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sessions/{sessionId}/questions/{questionId}/upvote:
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: questionId
+        in: path
+        required: true
+        schema:
+          type: integer
+
+    post:
+      tags: [Questions]
+      summary: Upvoter une question
+      description: >
+        Accessible publiquement. Incrémente le compteur d'upvotes de 1.
+        Pas de limite d'upvotes dans cette version.
+      responses:
+        '200':
+          description: Upvote enregistré
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResponse'
+        '404':
+          description: Question ou session introuvable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
