@@ -15,16 +15,19 @@ public class AuthService {
 
     private final AdminRepository adminRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final JwtUtil jwtUtil;  // ✅ Injecté, plus appelé en static
+    private final JwtUtil jwtUtil;
 
     public AuthService(AdminRepository adminRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtUtil jwtUtil) {
         this.adminRepository = adminRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtUtil = jwtUtil;
     }
-
     public LoginResponse login(LoginRequest loginRequest) {
+        System.out.println("Tentative de login pour : " + loginRequest.getUsername());
+
         Admin admin = adminRepository.getAdmin(loginRequest.getUsername());
+
+        System.out.println("Utilisateur trouvé : " + (admin != null ? admin.getUsername() : "NULL"));
 
         if (admin == null) {
             throw new RuntimeException("Information incorrect");
@@ -35,11 +38,14 @@ public class AuthService {
                 admin.getPasswordHash()
         );
 
+        System.out.println("Password match : " + passwordMatch);
+
         if (!passwordMatch) {
             throw new RuntimeException("Information incorrect");
         }
 
-        String token = jwtUtil.generateToken(admin.getUsername());  // ✅ instance, pas static
+        String token = jwtUtil.generateToken(admin.getUsername());
         return new LoginResponse(token);
     }
+
 }

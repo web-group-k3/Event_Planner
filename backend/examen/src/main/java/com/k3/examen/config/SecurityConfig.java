@@ -1,5 +1,6 @@
 package com.k3.examen.config;
 
+import com.k3.examen.config.JwtUtil; // Assure-toi que l'import est correct
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -29,19 +31,14 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final CorsConfigurationSource corsConfigurationSource;   // Si tu as une classe CorsConfig
 
-
-    public SecurityConfig(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
+    public SecurityConfig(JwtUtil jwtUtil,
+                          UserDetailsService userDetailsService,
+                          CorsConfigurationSource corsConfigurationSource) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
-    }
-
-    public UserDetailsService getUserDetailsService() {
-        return userDetailsService;
-    }
-
-    public JwtUtil getJwtUtil() {
-        return jwtUtil;
+        this.corsConfigurationSource = corsConfigurationSource;
     }
 
     @Bean
@@ -50,8 +47,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-            throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
@@ -60,8 +56,7 @@ public class SecurityConfig {
             @Override
             protected void doFilterInternal(HttpServletRequest request,
                                             HttpServletResponse response,
-                                            FilterChain chain)
-                    throws ServletException, IOException {
+                                            FilterChain chain) throws ServletException, IOException {
 
                 String authHeader = request.getHeader("Authorization");
 
@@ -73,8 +68,7 @@ public class SecurityConfig {
                         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                         UsernamePasswordAuthenticationToken auth =
-                                new UsernamePasswordAuthenticationToken(
-                                        userDetails, null, userDetails.getAuthorities());
+                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                         auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(auth);
@@ -88,11 +82,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(s -> s
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
