@@ -1,5 +1,6 @@
 package com.k3.examen.repository;
 
+import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Question;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -13,18 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
-//@Repository
+@Repository
 public class QuestionRepository {
+    private final DatabaseConnection databaseConnection;
+    public QuestionRepository(DatabaseConnection databaseConnection) {
+        this.databaseConnection=databaseConnection;
+    }
 
-    private final DataSource dataSource;
-
-    public List<Question> findBySessionId(Long sessionId) throws SQLException {
+    public List<Question> findBySessionId(String sessionId) throws SQLException {
         List<Question> list = new ArrayList<>();
         String sql = "SELECT * FROM question WHERE session_id = ? ORDER BY upvotes DESC, created_at ASC";
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = databaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, sessionId);
+            ps.setString(1, sessionId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) list.add(mapQuestion(rs));
             }

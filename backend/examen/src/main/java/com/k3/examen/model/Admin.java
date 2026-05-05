@@ -4,7 +4,7 @@ import lombok.*;
 
 
 public class Admin {
-    private Integer id;
+    private String id;
     private String username;
     private String passwordHash;
 
