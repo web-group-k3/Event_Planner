@@ -12,4 +12,7 @@ public class Room {
     private String name;
     private String address;
     private Integer capacity;
+
+    public Room(Object o, String name) {
+    }
 }

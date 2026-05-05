@@ -12,4 +12,7 @@ public class RoomDto {
     private String name;
     private String address;
     private Integer capacity;
+
+    public RoomDto(String id, String name) {
+    }
 }

@@ -2,6 +2,7 @@ package com.k3.examen.repository;
 
 import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Room;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+@Repository
 public class RoomRepository {
     private Room mapRow(ResultSet rs) throws SQLException {
         return new Room(
