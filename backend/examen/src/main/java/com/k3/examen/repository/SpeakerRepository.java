@@ -126,4 +126,7 @@ public class SpeakerRepository {
                 .eventId(rs.getLong("event_id"))
                 .build();
     }
+
+    public List<Speaker> findBySessionId(String id) {
+    }
 }

@@ -1,29 +1,30 @@
 package com.k3.examen.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
+import java.util.List;
+@Data
+@AllArgsConstructor
 
 public class Session {
-    private Long id;
+    private String id;
     private String title;
+    private String description;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Long roomId;
-    private Long eventId;
-
+    private Integer guestNumber;
+    private Room roomId;
+    private Event eventId;
+    private List<Speaker> speakers;
+    public boolean isLive() {
+        LocalDateTime now = LocalDateTime.now();
+        return now.isAfter(startTime) && now.isBefore(endTime);
+    }
     public Session() {}
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public LocalDateTime getStartTime() { return startTime; }
-    public void setStartTime(LocalDateTime v) { this.startTime = v; }
-    public LocalDateTime getEndTime() { return endTime; }
-    public void setEndTime(LocalDateTime v) { this.endTime = v; }
-    public Long getRoomId() { return roomId; }
-    public void setRoomId(Long roomId) { this.roomId = roomId; }
-    public Long getEventId() { return eventId; }
-    public void setEventId(Long eventId) { this.eventId = eventId; }
 
     public static Builder builder() { return new Builder(); }
 
