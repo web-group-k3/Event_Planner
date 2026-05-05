@@ -1,5 +1,8 @@
 package com.k3.examen.service;
 
+import org.springframework.stereotype.Service;
+
+
 import com.k3.examen.dto.RoomDto;
 import com.k3.examen.dto.SessionDto;
 import com.k3.examen.dto.SpeakerDto;
@@ -17,7 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Service
 public class SessionService {
     private final SessionRepository sessionRepository;
     private final RoomRepository roomRepository;
@@ -37,7 +40,7 @@ public class SessionService {
                 .collect(Collectors.toList());
 
     }
-    public SessionDto findById(String eventId,Long sessionId)   {
+    public SessionDto findById(String eventId,String sessionId) throws SQLException {
         Session session = sessionRepository.findById(sessionId);
         if (session != null || !session.getEventId().equals(eventId)) {
             throw new ResourceNotFoundException("Session not found");
@@ -79,8 +82,8 @@ public class SessionService {
         Session existing= sessionRepository.findById(sessionId);
         if(existing != null || !existing.getEventId().equals(eventId)) {
             throw new ResourceNotFoundException("Session not found");
-            sessionRepository.delete(sessionId);
         }
+        sessionRepository.delete(sessionId);
     }
     private SessionDto toDto(Session s,  boolean withDetails) {
         SessionDto dto = new SessionDto();
