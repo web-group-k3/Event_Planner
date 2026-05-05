@@ -49,5 +49,22 @@ public class RoomRepository {
                 throw new RuntimeException(e);
             }
         }
-    public
+    public Room save(Room room) throws SQLException {
+        String sql = "INSERT INTO room (id,name,adress,capacity) VALUES (?,?,?,?) RETURNING *";
+        try (Connection con = DatabaseConnection.getConnection()) {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, room.getId());
+            ps.setString(2, room.getName());
+            ps.setString(3, room.getAddress());
+            ps.setInt(4, room.getCapacity());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapRow(rs);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        throw new RuntimeException("Error saving room");
+    }
 }
