@@ -67,4 +67,28 @@ public class RoomRepository {
         }
         throw new RuntimeException("Error saving room");
     }
+    public Room update(String id, Room room) throws SQLException {
+        String sql = "UPDATE room SET name=? WHERE id=? RETURNING *";
+        try (Connection con = DatabaseConnection.getConnection()) {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, room.getName());
+            ps.setString(2, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapRow(rs);
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        throw new RuntimeException("Error updating room");
+    }
+    public boolean delete(String id) throws SQLException {
+        String sql = "DELETE FROM room WHERE id = ?";
+        try (Connection con = DatabaseConnection.getConnection()) {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, id);
+            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
+        }
+    }
 }
