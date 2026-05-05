@@ -19,19 +19,35 @@ public class RoomRepository {
                 rs.getInt("capacity")
         );
     }
-    public List<Room> findAll() throws SQLException {
+    public List<Room> findAll() {
         List<Room> rooms = new ArrayList<>();
         String sql = "SELECT * FROM room ORDER BY name";
-        try (Connection con = DatabaseConnection.getConnection()){
+        try (Connection con = DatabaseConnection.getConnection()) {
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 rooms.add(mapRow(rs));
             }
             return rooms;
-        }catch (SQLException e){
-            throw new SQLException(e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
     }
+        public Room findRoomById(String id) {
+            String sql = "SELECT * FROM room WHERE id = ?";
+            try (Connection con = DatabaseConnection.getConnection()){
+                PreparedStatement ps = con.prepareStatement(sql);
+                ps.setString(1, id);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()){
+                    return mapRow(rs);
+                }
+                return null;
+            }
+            catch (SQLException e){
+                throw new RuntimeException(e);
+            }
+        }
+    public
 }
