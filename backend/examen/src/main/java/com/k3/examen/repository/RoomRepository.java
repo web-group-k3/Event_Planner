@@ -1,9 +1,14 @@
 package com.k3.examen.repository;
 
+import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Room;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RoomRepository {
     private Room mapRow(ResultSet rs) throws SQLException {
@@ -14,5 +19,19 @@ public class RoomRepository {
                 rs.getInt("capacity")
         );
     }
+    public List<Room> findAll() throws SQLException {
+        List<Room> rooms = new ArrayList<>();
+        String sql = "SELECT * FROM room ORDER BY name";
+        try (Connection con = DatabaseConnection.getConnection()){
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                rooms.add(mapRow(rs));
+            }
+            return rooms;
+        }catch (SQLException e){
+            throw new SQLException(e.getMessage());
+        }
 
+    }
 }
