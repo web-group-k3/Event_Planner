@@ -1,13 +1,15 @@
 package com.k3.examen.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
-@Data
-@AllArgsConstructor
+import java.util.List;
+
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Event {
     private String id;
     private String title;
@@ -15,4 +17,5 @@ public class Event {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String location;
+    private List<Session> sessions;
 }

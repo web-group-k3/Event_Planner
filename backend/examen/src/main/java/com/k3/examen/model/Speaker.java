@@ -1,23 +1,23 @@
 package com.k3.examen.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Speaker {
     private String id;
     private String fullName;
     private String photoUrl;
     private String bio;
     private String links;
-    private String eventId;
-    private List<Session> sessions;
+    private List<Session> sessions; // ✔️ correct
 
-    public static Builder builder() { return new Builder(); }
+
+   /* public static Builder builder() { return new Builder(); }
 
     public static class Builder {
         private final Speaker s = new Speaker();
@@ -29,5 +29,5 @@ public class Speaker {
         public Builder eventId(Long v) { s.eventId = v; return this; }
         public Builder sessions(List<Session> v) { s.sessions = v; return this; }
         public Speaker build() { return s; }
-    }
+    }*/
 }

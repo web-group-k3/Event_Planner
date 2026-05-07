@@ -1,13 +1,14 @@
 package com.k3.examen.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 
 public class Session {
     private String id;
@@ -17,16 +18,17 @@ public class Session {
     private LocalDateTime endTime;
     private Integer guestNumber;
     private Room roomId;
-    private Event eventId;
+    private String eventId;
     private List<Speaker> speakers;
+    private List<Question> questions;
     public boolean isLive() {
         LocalDateTime now = LocalDateTime.now();
         return now.isAfter(startTime) && now.isBefore(endTime);
     }
-    public Session() {}
 
 
-    public static Builder builder() { return new Builder(); }
+
+    /*public static Builder builder() { return new Builder(); }
 
     public static class Builder {
         private final Session s = new Session();
@@ -37,5 +39,5 @@ public class Session {
         public Builder roomId(Long v) { s.roomId = v; return this; }
         public Builder eventId(Long v) { s.eventId = v; return this; }
         public Session build() { return s; }
-    }
+    }*/
 }
