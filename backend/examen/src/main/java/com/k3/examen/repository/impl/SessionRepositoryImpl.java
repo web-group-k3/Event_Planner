@@ -6,6 +6,7 @@ import com.k3.examen.repository.SessionRepository;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -191,5 +192,51 @@ public class SessionRepositoryImpl implements SessionRepository {
         }
         return Optional.empty();
     }
-
+    @Override
+    public boolean existsConflictInRoom(String roomId, LocalDateTime startTime, LocalDateTime endTime, String excludeSessionId) {
+        String sql = """
+                SELECT 1 FROM session
+                WHERE room_id = ?
+                  AND id != ?
+                  AND start_time < ?
+                  AND end_time > ?
+                LIMIT 1
+                """;
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, roomId);
+            ps.setString(2, excludeSessionId == null ? "-1" : excludeSessionId);
+            ps.setTimestamp(3, Timestamp.valueOf(endTime));
+            ps.setTimestamp(4, Timestamp.valueOf(startTime));
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error existsConflictInRoom"+ e.getMessage());
+        }
+    }
+    @Override
+    public boolean existsConflictForSpeaker(String speakerId, LocalDateTime startTime, LocalDateTime endTime, String excludeSessionId) {
+        String sql = """
+        SELECT 1 FROM session s
+        JOIN session_speakers ss ON ss.session_id = s.id
+        WHERE ss.speaker_id = ?
+          AND s.id != ?
+          AND s.start_time < ?
+          AND s.end_time > ?
+        LIMIT 1
+        """;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, speakerId);
+            ps.setString(2, excludeSessionId == null ? "-1" : excludeSessionId);
+            ps.setTimestamp(3, Timestamp.valueOf(endTime));
+            ps.setTimestamp(4, Timestamp.valueOf(startTime));
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error existsConflictForSpeaker", e);
+        }
+    }
 }
