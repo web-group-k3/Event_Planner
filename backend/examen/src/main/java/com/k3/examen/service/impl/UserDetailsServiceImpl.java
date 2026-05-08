@@ -1,4 +1,4 @@
-package com.k3.examen.service;
+package com.k3.examen.service.impl;
 
 import com.k3.examen.model.Admin;
 import com.k3.examen.repository.AdminRepository;

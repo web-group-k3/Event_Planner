@@ -1,7 +1,7 @@
 package com.k3.examen.controller;
 
 import com.k3.examen.dto.EventDto;
-import com.k3.examen.service.EventService;
+import com.k3.examen.service.impl.EventService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

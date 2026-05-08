@@ -1,9 +1,8 @@
-package com.k3.examen.service;
+package com.k3.examen.service.impl;
 
 import com.k3.examen.model.Question;
 import com.k3.examen.repository.QuestionRepository;
 import com.k3.examen.repository.SessionRepository;
-import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;

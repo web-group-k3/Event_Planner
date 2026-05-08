@@ -1,8 +1,7 @@
-package com.k3.examen.service;
+package com.k3.examen.service.impl;
 
 import com.k3.examen.model.Speaker;
 import com.k3.examen.repository.SpeakerRepository;
-import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;

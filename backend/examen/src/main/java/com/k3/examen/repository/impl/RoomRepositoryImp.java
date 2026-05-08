@@ -4,6 +4,7 @@ import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Room;
 import com.k3.examen.model.RoomUpdateRequest;
 import com.k3.examen.repository.RoomRepository;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Repository
 public class RoomRepositoryImp implements RoomRepository {
     private DatabaseConnection databaseConnection;
     public RoomRepositoryImp(DatabaseConnection databaseConnection) {

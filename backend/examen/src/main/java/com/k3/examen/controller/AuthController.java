@@ -3,7 +3,7 @@ package com.k3.examen.controller;
 import com.k3.examen.config.JwtUtil;
 import com.k3.examen.dto.LoginRequest;
 import com.k3.examen.dto.LoginResponse;
-import com.k3.examen.service.AuthService;
+import com.k3.examen.service.impl.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

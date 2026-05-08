@@ -4,12 +4,13 @@ import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Session;
 import com.k3.examen.model.Speaker;
 import com.k3.examen.repository.SessionRepository;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Repository
 public class SessionRepositoryImpl implements SessionRepository {
     private final DatabaseConnection databaseConnection;
     public SessionRepositoryImpl(DatabaseConnection databaseConnection) {

@@ -4,12 +4,13 @@ import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Event;
 import com.k3.examen.model.Room;
 import com.k3.examen.repository.EventRepository;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Repository
 public class EventRepositoryImpl implements EventRepository {
     private DatabaseConnection databaseConnection;
     public EventRepositoryImpl(DatabaseConnection databaseConnection) {

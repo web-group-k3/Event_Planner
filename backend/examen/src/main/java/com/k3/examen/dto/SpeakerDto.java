@@ -1,9 +1,12 @@
 package com.k3.examen.dto;
 
 import com.k3.examen.model.Event;
+import com.k3.examen.model.Session;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,5 +17,6 @@ public class SpeakerDto {
     private String photoUrl;
     private String bio;
     private String links;
-    private Event eventId;
+    private List<Event> eventId;
+    private List<Session> sessionId;
 }

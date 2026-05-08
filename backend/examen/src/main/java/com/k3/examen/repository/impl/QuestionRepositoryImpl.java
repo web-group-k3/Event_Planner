@@ -3,13 +3,14 @@ package com.k3.examen.repository.impl;
 import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Question;
 import com.k3.examen.repository.QuestionRepository;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Repository
 public class QuestionRepositoryImpl implements QuestionRepository {
     private final DatabaseConnection connection;
     public QuestionRepositoryImpl(DatabaseConnection connection) {

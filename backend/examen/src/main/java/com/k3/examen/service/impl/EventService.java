@@ -1,4 +1,4 @@
-package com.k3.examen.service;
+package com.k3.examen.service.impl;
 
 import com.k3.examen.dto.EventDto;
 import com.k3.examen.exception.ResourceNotFoundException;

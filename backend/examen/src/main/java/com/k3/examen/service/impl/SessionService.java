@@ -1,4 +1,4 @@
-package com.k3.examen.service;
+package com.k3.examen.service.impl;
 
 import org.springframework.stereotype.Service;
 
@@ -7,7 +7,6 @@ import com.k3.examen.dto.RoomDto;
 import com.k3.examen.dto.SessionDto;
 import com.k3.examen.dto.SpeakerDto;
 import com.k3.examen.exception.ResourceNotFoundException;
-import com.k3.examen.model.Event;
 import com.k3.examen.model.Room;
 import com.k3.examen.model.Session;
 import com.k3.examen.model.Speaker;
@@ -17,7 +16,6 @@ import com.k3.examen.repository.SpeakerRepository;
 import com.k3.examen.validator.SessionValidator;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service

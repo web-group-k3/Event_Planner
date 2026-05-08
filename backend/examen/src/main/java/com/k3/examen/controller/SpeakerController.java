@@ -1,7 +1,7 @@
 package com.k3.examen.controller;
 
 import com.k3.examen.model.Speaker;
-import com.k3.examen.service.SpeakerService;
+import com.k3.examen.service.impl.SpeakerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,11 +1,10 @@
-package com.k3.examen.service;
+package com.k3.examen.service.impl;
 
 import com.k3.examen.config.JwtUtil;
 import com.k3.examen.dto.LoginRequest;
 import com.k3.examen.dto.LoginResponse;
 import com.k3.examen.model.Admin;
 import com.k3.examen.repository.AdminRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

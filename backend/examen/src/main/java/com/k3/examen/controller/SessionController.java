@@ -1,7 +1,7 @@
 package com.k3.examen.controller;
 
 import com.k3.examen.dto.SessionDto;
-import com.k3.examen.service.SessionService;
+import com.k3.examen.service.impl.SessionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
