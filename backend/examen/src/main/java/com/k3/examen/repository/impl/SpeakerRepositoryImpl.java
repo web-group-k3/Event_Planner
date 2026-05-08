@@ -114,7 +114,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     @Override
     public List<Speaker> findByRoomId(String roomId) {
         String sql = """
-        SELECT DISTINCT sp.* FROM speakers sp
+        SELECT DISTINCT sp.* FROM speaker sp
         JOIN session_speakers ss ON ss.speaker_id = sp.id
         JOIN sessions s ON s.id = ss.session_id
         WHERE s.room_id = ?
@@ -137,7 +137,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     public List<Speaker> findByEventId(String eventId) {
         String sql = """
         
-                SELECT DISTINCT sp.* FROM speakers sp
+                SELECT DISTINCT sp.* FROM speaker sp
         JOIN session_speakers ss ON ss.speaker_id = sp.id
         JOIN sessions s ON s.id = ss.session_id
         WHERE s.event_id = ?
@@ -151,14 +151,14 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erreur findByEventId speakers", e);
+            throw new RuntimeException("Error findByEventId speakers", e);
         }
         return list;
     }
     @Override
     public List<Speaker> findBySessionId(String sessionId){
         String sql = """
-            SELECT s.* FROM speakers s
+            SELECT s.* FROM speaker s
             JOIN session_speakers ss ON ss.speaker_id = s.id
             WHERE ss.session_id = ?
             ORDER BY s.full_name

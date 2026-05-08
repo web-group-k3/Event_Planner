@@ -139,7 +139,7 @@ public class RoomRepositoryImp implements RoomRepository {
     public List<Room> findByEventId(String eventId) {
         String sql = """
         SELECT DISTINCT r.* FROM rooms r
-        JOIN sessions s ON s.room_id = r.id
+        JOIN session s ON s.room_id = r.id
         WHERE s.event_id = ?
         ORDER BY r.name
         """;
@@ -160,7 +160,7 @@ public class RoomRepositoryImp implements RoomRepository {
     public List<Room> findBySpeakerId(String speakerId) {
         String sql = """
         SELECT DISTINCT r.* FROM rooms r
-        JOIN sessions s ON s.room_id = r.id
+        JOIN session s ON s.room_id = r.id
         JOIN session_speakers ss ON ss.session_id = s.id
         WHERE ss.speaker_id = ?
         ORDER BY r.name
@@ -180,7 +180,7 @@ public class RoomRepositoryImp implements RoomRepository {
 
     @Override
     public List<Room> findByAddress(String address) {
-        String sql = "SELECT * FROM rooms WHERE address ILIKE ? ORDER BY name";
+        String sql = "SELECT * FROM room WHERE address ILIKE ? ORDER BY name";
         List<Room> list = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

@@ -73,7 +73,7 @@ public class SessionRepositoryImpl implements SessionRepository {
     @Override
     public List<Session> findByRoomIdAndEventId(String roomId, String eventId) {
         String sql = """
-        SELECT * FROM sessions
+        SELECT * FROM session
         WHERE event_id = ? AND room_id = ?
         ORDER BY start_time
         """;

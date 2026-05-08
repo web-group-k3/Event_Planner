@@ -6,7 +6,6 @@ import com.k3.examen.repository.QuestionRepository;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -95,6 +94,19 @@ public class QuestionRepositoryImpl implements QuestionRepository {
             ps.executeUpdate();
         }catch (SQLException e) {
             throw new RuntimeException("Error deleting question",e);
+        }
+    }
+
+    @Override
+    public void updateContent(String id, String newContent) {
+        String sql = "UPDATE question SET content = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newContent);
+            ps.setString(2, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updateContent question", e);
         }
     }
 

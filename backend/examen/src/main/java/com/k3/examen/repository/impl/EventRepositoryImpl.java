@@ -104,8 +104,8 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public List<Event> findByRoomId(String roomId) {
         String sql = """
-        SELECT DISTINCT e.* FROM events e
-        JOIN sessions s ON s.event_id = e.id
+        SELECT DISTINCT e.* FROM event e
+        JOIN session s ON s.event_id = e.id
         WHERE s.room_id = ?
         ORDER BY e.start_date
         """;
@@ -125,8 +125,8 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public List<Event> findBySpeakerId(String speakerId) {
         String sql = """
-        SELECT DISTINCT e.* FROM events e
-        JOIN sessions s ON s.event_id = e.id
+        SELECT DISTINCT e.* FROM event e
+        JOIN session s ON s.event_id = e.id
         JOIN session_speakers ss ON ss.session_id = s.id
         WHERE ss.speaker_id = ?
         ORDER BY e.start_date

@@ -11,4 +11,5 @@ public interface QuestionRepository {
     Question save(Question question);
     void upvote(String id);
     void delete(String id);
+    void updateContent(String id, String newContent);
 }
