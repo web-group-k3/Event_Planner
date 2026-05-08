@@ -2,6 +2,7 @@ package com.k3.examen.repository.impl;
 
 import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Room;
+import com.k3.examen.model.RoomUpdateRequest;
 import com.k3.examen.repository.RoomRepository;
 
 import java.sql.Connection;
@@ -10,49 +11,61 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RoomRepositoryImp implements RoomRepository {
-    private Room mapRow(ResultSet rs) throws SQLException {
-        return new Room(
-                rs.getString("id"),
-                rs.getString("name"),
-                rs.getString("adress"),
-                rs.getInt("capacity")
-        );
+    private DatabaseConnection databaseConnection;
+    public RoomRepositoryImp(DatabaseConnection databaseConnection) {
+        this.databaseConnection = databaseConnection;
     }
+    private Room mapRow(ResultSet rs) throws SQLException {
+        return  Room.builder()
+                .id(rs.getString("id"))
+                .name(rs.getString("name"))
+                .address(rs.getString("adress"))
+                .capacity(rs.getInt("capacity"))
+                .build();
+
+    }
+    // FIND ALL ROOM
+    @Override
     public List<Room> findAll() {
         List<Room> rooms = new ArrayList<>();
-        String sql = "SELECT * FROM room ORDER BY name";
-        try (Connection con = DatabaseConnection.getConnection()) {
+        String sql = "SELECT id, name, adress, capacity FROM room ORDER BY name";
+        try (Connection con = databaseConnection.getConnection()){
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 rooms.add(mapRow(rs));
             }
-            return rooms;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return rooms;
     }
-    public Room findRoomById(String id) {
-        String sql = "SELECT * FROM room WHERE id = ?";
-        try (Connection con = DatabaseConnection.getConnection()){
+    //FIND ROOM BY ID
+    @Override
+    public Optional<Room> findRoomById(String id) {
+        String sql = "SELECT id, name,adress,capacity  FROM room WHERE id = ?";
+        try (Connection con = databaseConnection.getConnection()){
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()){
-                return mapRow(rs);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapRow(rs));
+                }
             }
-            return null;
         }
         catch (SQLException e){
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error in findRoomById", e);
         }
+        return Optional.empty();
     }
-    public Room save(Room room) throws SQLException {
+    //CREATE NEW ROOM
+    @Override
+    public Room save(Room room)  {
         String sql = "INSERT INTO room (id,name,adress,capacity) VALUES (?,?,?,?) RETURNING *";
-        try (Connection con = DatabaseConnection.getConnection()) {
+        try (Connection con = databaseConnection.getConnection()) {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, room.getId());
             ps.setString(2, room.getName());
@@ -60,36 +73,64 @@ public class RoomRepositoryImp implements RoomRepository {
             ps.setInt(4, room.getCapacity());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return mapRow(rs);
-
+                room.setId(rs.getString("id"));
+                room.setName(rs.getString("name"));
+                room.setAddress(rs.getString("adress"));
+                room.setCapacity(rs.getInt("capacity"));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error saving room");
         }
-        throw new RuntimeException("Error saving room");
+        return room;
     }
-    public Room update(String id, Room room) throws SQLException {
-        String sql = "UPDATE room SET name=? WHERE id=? RETURNING *";
-        try (Connection con = DatabaseConnection.getConnection()) {
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, room.getName());
-            ps.setString(2, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return mapRow(rs);
+    // CHANGE ROOM INFORMATION
+    @Override
+    public Room update(String id, RoomUpdateRequest request) {
+       if (id ==null){
+           throw new RuntimeException("id can not be null to update a room");
+       }
+        StringBuilder sql = new StringBuilder("UPDATE rooms SET ");
+        List<Object> params = new ArrayList<>();
+        if (request.getName() != null) {
+            sql.append("name = ?, ");
+            params.add(request.getName());
+        }
+
+        if (request.getCapacity() != null) {
+            sql.append("capacity = ?, ");
+            params.add(request.getCapacity());
+        }
+        // if no modification is giving
+        if (params.isEmpty()) {
+            throw new IllegalArgumentException("if want to uptade you have to give at least one param");
+        }
+        sql.setLength(sql.length() - 2);
+        sql.append(" WHERE id = ?");
+        params.add(id);
+        try(Connection con = databaseConnection.getConnection()) {
+            PreparedStatement ps = con.prepareStatement(sql.toString());
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            int rowsUpdated = ps.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new RuntimeException("Room with id " + id + " not found");
             }
         }catch (SQLException e){
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error in updating room", e);
         }
-        throw new RuntimeException("Error updating room");
+        return findRoomById(id).orElseThrow(() -> new RuntimeException("Room with id " + id + " not found after updating"));
     }
-    public boolean delete(String id) throws SQLException {
+    public boolean delete(String id){
         String sql = "DELETE FROM room WHERE id = ?";
         try (Connection con = DatabaseConnection.getConnection()) {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, id);
             ps.executeUpdate();
             return ps.executeUpdate() > 0;
+        }
+        catch (SQLException e){
+            throw new RuntimeException("Error in deleting room", e);
         }
     }
 }
