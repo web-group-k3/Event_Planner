@@ -15,8 +15,8 @@ import java.util.Optional;
 public interface SpeakerRepository {
     List<Speaker> findAll();
     Optional<Speaker> findById(String id);
-    List<Speaker> findBySession(String sessionId);
+    List<Speaker> findBySessionId(String sessionId);
     Speaker save(Speaker speaker);
     Speaker update(Speaker speaker);
-    void delete(String id);
+    boolean delete(String id);
 }
