@@ -4,6 +4,8 @@ import com.k3.examen.dto.EventDto;
 import com.k3.examen.exception.ResourceNotFoundException;
 import com.k3.examen.model.Event;
 import com.k3.examen.repository.EventRepository;
+import com.k3.examen.repository.SessionRepository;
+import com.k3.examen.service.EventService;
 import com.k3.examen.validator.EventValidator;
 import org.springframework.stereotype.Service;
 
@@ -12,45 +14,56 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class EventService {
-    private EventRepository eventRepository;
-    public EventService(EventRepository eventRepository) {
+public class EventServiceImpl implements EventService {
+    private final EventRepository eventRepository;
+    private final SessionRepository sessionRepository;
+    public EventServiceImpl(EventRepository eventRepository, SessionRepository sessionRepository) {
         this.eventRepository = eventRepository;
+        this.sessionRepository = sessionRepository;
     }
-    public List<EventDto> findAll() throws SQLException {
-        return eventRepository.findAll().stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-    }
-    public EventDto findById(String id) throws SQLException {
-        Event event = eventRepository.findById(id);
-        if (event == null) throw new ResourceNotFoundException("Événement introuvable avec l'id : " + id);
-        return toDto(event);
-    }
-    public EventDto create(EventDto dto) throws SQLException {
-        EventValidator.validate(dto);
-        Event saved = eventRepository.save(toEntity(dto));
-        return toDto(saved);
-    }
-    public EventDto update(String id, EventDto dto) throws SQLException {
-        EventValidator.validate(dto);
-        if (eventRepository.findById(id) == null)
-            throw new ResourceNotFoundException("Événement introuvable avec l'id : " + id);
-        Event updated = eventRepository.update(id, toEntity(dto));
-        return toDto(updated);
-    }
-    public void delete(String id) throws SQLException {
-        if (eventRepository.findById(id) == null)
-            throw new ResourceNotFoundException("Événement introuvable avec l'id : " + id);
-        eventRepository.delete(id);
-    }
-    private EventDto toDto(Event e) {
-        return new EventDto(e.getId(), e.getTitle(), e.getDescription(),
-                e.getStartDate(), e.getEndDate(), e.getLocation());
+    @Override
+    public List<Event> getAllEvents() {
+        return eventRepository.findAll();
     }
 
-    private Event toEntity(EventDto dto) {
-        return new Event(null, dto.getTitle(), dto.getDescription(),
-                dto.getStartDate(), dto.getEndDate(), dto.getLocation());
+    @Override
+    public Event getEventById(String id) {
+        return eventRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("No event found with id " + id));
+    }
+
+    @Override
+    public Event getEventWithSessions(String id) {
+        Event event = getEventById(id);
+        event.setSessions(sessionRepository.findByEventId(id));
+        return event;
+    }
+
+    @Override
+    public Event createEvent(Event event) {
+        validateEvent(event);
+        return eventRepository.save(event);
+    }
+
+    @Override
+    public Event updateEvent(String id, Event event) {
+        getEventById(id);
+        validateEvent(event);
+        event.setId(id);
+        return eventRepository.update(event);
+    }
+
+    @Override
+    public void deleteEvent(String id) {
+        getEventById(id);
+        eventRepository.delete(id);
+    }
+    private void validateEvent(Event event) {
+        if (event.getTitle() == null || event.getTitle().isBlank())
+            throw new IllegalArgumentException("title is blank");
+        if (event.getStartDate() == null || event.getEndDate() == null)
+            throw new IllegalArgumentException("date are blank");
+        if (event.getEndDate().isBefore(event.getStartDate()))
+            throw new IllegalArgumentException("end date is before start date");
     }
 }
