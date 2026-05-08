@@ -10,7 +10,7 @@ import lombok.*;
 public class Room {
     private String id;
     private String name;
-    private String address;
+    private String adress;
     private Integer capacity;
 
 

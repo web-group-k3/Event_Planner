@@ -37,39 +37,28 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) list.add(mapRow(rs));
         }catch (SQLException e) {
-            throw new RuntimeException("Error finding all speakers ",e);
+            throw new RuntimeException("Error finding all speakers " + e.getMessage());
         }
         return list;
     }
     @Override
     public Optional<Speaker> findById(String id)  {
         try (Connection conn = databaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT id,full_name,photo_url,bio,links FROM speaker ORDER BY full_name")) {
+             PreparedStatement ps = conn.prepareStatement("SELECT id,full_name,photo_url,bio,links FROM speaker where id = ?")) {
              ps.setString(1, id);
              try (ResultSet rs=ps.executeQuery()){
                  if (rs.next()) return Optional.of(mapRow(rs));
              }
         }catch (SQLException e) {
-            throw new RuntimeException("Error finding speaker ",e);
+            throw new RuntimeException("Error finding speaker " +e.getMessage());
         }
         return Optional.empty();
     }
 
-    /*public List<Speaker> findByEventId(Long eventId) throws SQLException {
-        List<Speaker> list = new ArrayList<>();
-        try (Connection conn = databaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT * FROM speaker WHERE event_id = ?")) {
-            ps.setLong(1, eventId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapSpeaker(rs));
-            }
-        }
-        return list;
-    }*/
     // CREATE NEW SPEAKER
     @Override
     public Speaker save(Speaker speaker) {
-        String sql = "INSERT INTO speaker (id,full_name, photo_url, bio, links) VALUES (?,?, ?, ?, ?) RETURNING id";
+        String sql = "INSERT INTO speaker (id,full_name, photo_url, bio, links) VALUES (?,?, ?, ?, ?)";
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,speaker.getId());
@@ -79,13 +68,13 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
             ps.setString(5, speaker.getLinks());
             ps.executeUpdate();
         }catch (SQLException e) {
-            throw new RuntimeException("Error saving speaker ",e);
+            throw new RuntimeException("Error saving speaker "+e.getMessage());
         }
         return speaker;
     }
     @Override
     public Speaker update( Speaker speaker)  {
-        String sql = "UPDATE speaker SET full_name=?, photo_url=?, bio=?, links=?WHERE id=?";
+        String sql = "UPDATE speaker SET full_name=?, photo_url=?, bio=?, links=? WHERE id=?";
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, speaker.getFullName());
@@ -95,7 +84,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
             ps.setString(5, speaker.getId());
             ps.executeUpdate();
         }catch (SQLException e){
-            throw new RuntimeException("Error updating speaker ",e);
+            throw new RuntimeException("Error updating speaker "+e.getMessage());
         }
         return speaker;
     }
@@ -106,7 +95,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
             ps.setString(1, id);
             ps.executeUpdate();
         }catch (SQLException e) {
-            throw new RuntimeException("Error deleting speaker ",e);
+            throw new RuntimeException("Error deleting speaker "+e.getMessage());
         }
         return true;
     }
@@ -116,7 +105,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
         String sql = """
         SELECT DISTINCT sp.* FROM speaker sp
         JOIN session_speakers ss ON ss.speaker_id = sp.id
-        JOIN sessions s ON s.id = ss.session_id
+        JOIN session s ON s.id = ss.session_id
         WHERE s.room_id = ?
         ORDER BY sp.full_name
         """;
@@ -128,7 +117,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error findByRoomId speakers", e);
+            throw new RuntimeException("Error findByRoomId speakers"+  e.getMessage());
         }
         return list;
     }
@@ -139,7 +128,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
         
                 SELECT DISTINCT sp.* FROM speaker sp
         JOIN session_speakers ss ON ss.speaker_id = sp.id
-        JOIN sessions s ON s.id = ss.session_id
+        JOIN session s ON s.id = ss.session_id
         WHERE s.event_id = ?
         ORDER BY sp.full_name
         """;
@@ -151,7 +140,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error findByEventId speakers", e);
+            throw new RuntimeException("Error findByEventId speakers"+ e.getMessage());
         }
         return list;
     }
@@ -171,7 +160,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error findBySessionId speakers", e);
+            throw new RuntimeException("Error findBySessionId speakers" +e.getMessage());
         }
         return list;
    }

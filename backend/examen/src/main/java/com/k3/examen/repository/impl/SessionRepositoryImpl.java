@@ -35,7 +35,7 @@ public class SessionRepositoryImpl implements SessionRepository {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) list.add(mapRow(rs));
         } catch (SQLException e) {
-            throw new RuntimeException("Error findAll sessions", e);
+            throw new RuntimeException("Error findAll sessions" + e.getMessage());
         }
         return list;
     }
@@ -50,7 +50,7 @@ public class SessionRepositoryImpl implements SessionRepository {
                 while (rs.next()) sessions.add(mapRow(rs));
             }
         }catch (SQLException e){
-            throw new RuntimeException("Error find sessions by event id", e);
+            throw new RuntimeException("Error find sessions by event id" + e.getMessage());
         }
         return sessions;
     }
@@ -65,7 +65,7 @@ public class SessionRepositoryImpl implements SessionRepository {
                 while (rs.next()) sessions.add(mapRow(rs));
             }
         }catch(SQLException e){
-            throw new RuntimeException("Error finding session by room id " + RoomId, e);
+            throw new RuntimeException("Error finding session by room id " + RoomId + e.getMessage());
         }
         return sessions;
     }
@@ -86,14 +86,14 @@ public class SessionRepositoryImpl implements SessionRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error findByEventIdAndRoomId", e);
+            throw new RuntimeException("Error findByEventIdAndRoomId"+ e.getMessage());
         }
         return list;
     }
 
     @Override
     public Session save(Session session) {
-            String sql = "INSERT INTO session (id,title, description, start_time, end_time, guest_Number, event_id, room_id) VALUES (?,?, ?, ?, ?, ?, ?, ?) RETURNING id";
+            String sql = "INSERT INTO session (id,title, description, start_time, end_time, guestNumber, event_id, room_id) VALUES (?,?, ?, ?, ?, ?, ?, ?)";
             try(Connection conn = databaseConnection.getConnection()) {
             PreparedStatement ps=conn.prepareStatement(sql);
             ps.setString(1, session.getId());
@@ -106,7 +106,7 @@ public class SessionRepositoryImpl implements SessionRepository {
             ps.setObject(8, session.getRoomId());
             ps.executeUpdate();
         }catch (SQLException e){
-            throw new RuntimeException("Error saving session", e);
+            throw new RuntimeException("Error saving session" +e.getMessage());
         }
         return session;
     }
@@ -132,7 +132,7 @@ public class SessionRepositoryImpl implements SessionRepository {
             ps.setString(8, session.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating session", e);
+            throw new RuntimeException("Error updating session" + e.getMessage());
         }
         return session;
     }
@@ -145,7 +145,7 @@ public class SessionRepositoryImpl implements SessionRepository {
             ps.setString(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error delete session", e);
+            throw new RuntimeException("Error delete session" + e.getMessage());
         }
     }
 
@@ -158,7 +158,7 @@ public class SessionRepositoryImpl implements SessionRepository {
             ps.setString(2, speakerId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erreur addSpeaker", e);
+            throw new RuntimeException("Erreur addSpeaker" + e.getMessage());
         }
     }
 
@@ -171,7 +171,7 @@ public class SessionRepositoryImpl implements SessionRepository {
             ps.setString(2, speakerId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error removeSpeaker", e);
+            throw new RuntimeException("Error removeSpeaker" + e.getMessage());
         }
     }
 
@@ -187,7 +187,7 @@ public class SessionRepositoryImpl implements SessionRepository {
         }catch (
                 SQLException e
         ){
-            throw new RuntimeException("Error finding session by id " + id, e);
+            throw new RuntimeException("Error finding session by id " + id +e.getMessage());
         }
         return Optional.empty();
     }

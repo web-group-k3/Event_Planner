@@ -39,7 +39,17 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
         this.corsConfigurationSource = corsConfigurationSource;
     }
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/**").permitAll()   // ← Tout autoriser (pour test)
+                        .anyRequest().authenticated()
+                );
 
+        return http.build();
+    }
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -80,7 +90,7 @@ public class SecurityConfig {
             }
         };
     }
-
+/*
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -97,5 +107,5 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
+    }*/
 }

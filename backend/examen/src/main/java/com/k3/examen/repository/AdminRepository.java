@@ -21,7 +21,7 @@ public class AdminRepository {
             ResultSet rs = ps.executeQuery();
             if(rs.next()) {
                 Admin admin = new Admin();
-                admin.setId(rs.getInt("id"));
+                admin.setId(rs.getString("id"));
                 admin.setUsername(rs.getString("username"));
                 admin.setPasswordHash(rs.getString("password_hash"));
                 return admin;

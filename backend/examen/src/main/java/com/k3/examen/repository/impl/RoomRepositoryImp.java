@@ -23,7 +23,7 @@ public class RoomRepositoryImp implements RoomRepository {
         return  Room.builder()
                 .id(rs.getString("id"))
                 .name(rs.getString("name"))
-                .address(rs.getString("adress"))
+                .adress(rs.getString("adress"))
                 .capacity(rs.getInt("capacity"))
                 .build();
 
@@ -58,7 +58,7 @@ public class RoomRepositoryImp implements RoomRepository {
             }
         }
         catch (SQLException e){
-            throw new RuntimeException("Error in findRoomById", e);
+            throw new RuntimeException("Error in findRoomById" + e.getMessage());
         }
         return Optional.empty();
     }
@@ -70,17 +70,17 @@ public class RoomRepositoryImp implements RoomRepository {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, room.getId());
             ps.setString(2, room.getName());
-            ps.setString(3, room.getAddress());
+            ps.setString(3, room.getAdress());
             ps.setInt(4, room.getCapacity());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 room.setId(rs.getString("id"));
                 room.setName(rs.getString("name"));
-                room.setAddress(rs.getString("adress"));
+                room.setAdress(rs.getString("adress"));
                 room.setCapacity(rs.getInt("capacity"));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error saving room");
+            throw new RuntimeException("Error saving room" + e.getMessage());
         }
         return room;
     }
@@ -90,7 +90,7 @@ public class RoomRepositoryImp implements RoomRepository {
        if (id ==null){
            throw new RuntimeException("id can not be null to update a room");
        }
-        StringBuilder sql = new StringBuilder("UPDATE rooms SET ");
+        StringBuilder sql = new StringBuilder("UPDATE room SET ");
         List<Object> params = new ArrayList<>();
         if (request.getName() != null) {
             sql.append("name = ?, ");
@@ -118,7 +118,7 @@ public class RoomRepositoryImp implements RoomRepository {
                 throw new RuntimeException("Room with id " + id + " not found");
             }
         }catch (SQLException e){
-            throw new RuntimeException("Error in updating room", e);
+            throw new RuntimeException("Error in updating room"+ e.getMessage());
         }
         return findRoomById(id).orElseThrow(() -> new RuntimeException("Room with id " + id + " not found after updating"));
     }
@@ -131,14 +131,14 @@ public class RoomRepositoryImp implements RoomRepository {
             return ps.executeUpdate() > 0;
         }
         catch (SQLException e){
-            throw new RuntimeException("Error in deleting room", e);
+            throw new RuntimeException("Error in deleting room" + e.getMessage());
         }
     }
 
     @Override
     public List<Room> findByEventId(String eventId) {
         String sql = """
-        SELECT DISTINCT r.* FROM rooms r
+        SELECT DISTINCT r.* FROM room r
         JOIN session s ON s.room_id = r.id
         WHERE s.event_id = ?
         ORDER BY r.name
@@ -151,7 +151,7 @@ public class RoomRepositoryImp implements RoomRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error findByEventId rooms", e);
+            throw new RuntimeException("Error findByEventId rooms" +e);
         }
         return list;
     }
@@ -159,7 +159,7 @@ public class RoomRepositoryImp implements RoomRepository {
     @Override
     public List<Room> findBySpeakerId(String speakerId) {
         String sql = """
-        SELECT DISTINCT r.* FROM rooms r
+        SELECT DISTINCT r.* FROM room r
         JOIN session s ON s.room_id = r.id
         JOIN session_speakers ss ON ss.session_id = s.id
         WHERE ss.speaker_id = ?
@@ -173,14 +173,14 @@ public class RoomRepositoryImp implements RoomRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error findBySpeakerId rooms", e);
+            throw new RuntimeException("Error findBySpeakerId rooms" + e);
         }
         return list;
     }
 
     @Override
     public List<Room> findByAddress(String address) {
-        String sql = "SELECT * FROM room WHERE address ILIKE ? ORDER BY name";
+        String sql = "SELECT * FROM room WHERE adress ILIKE ? ORDER BY name";
         List<Room> list = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -189,7 +189,7 @@ public class RoomRepositoryImp implements RoomRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error findByAddress rooms", e);
+            throw new RuntimeException("Error findByAddress rooms" + e.getMessage());
         }
         return list;
     }

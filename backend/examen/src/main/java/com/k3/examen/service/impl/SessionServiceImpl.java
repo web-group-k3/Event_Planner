@@ -1,6 +1,6 @@
 package com.k3.examen.service.impl;
 
-import com.k3.examen.repository.QuestionRepository;
+import com.k3.examen.repository.*;
 import com.k3.examen.service.SessionService;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +12,6 @@ import com.k3.examen.exception.ResourceNotFoundException;
 import com.k3.examen.model.Room;
 import com.k3.examen.model.Session;
 import com.k3.examen.model.Speaker;
-import com.k3.examen.repository.RoomRepository;
-import com.k3.examen.repository.SessionRepository;
-import com.k3.examen.repository.SpeakerRepository;
 import com.k3.examen.validator.SessionValidator;
 
 import java.sql.SQLException;
@@ -25,14 +22,22 @@ public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
     private final RoomRepository roomRepository;
     private final SpeakerRepository speakerRepository;
+    private final QuestionRepository questionRepository;
+    private final EventRepository eventRepository;
     private final SessionValidator sessionValidator;
-    private QuestionRepository questionRepository;
-    public SessionServiceImpl(QuestionRepository questionRepository,SessionRepository sessionRepository, RoomRepository roomRepository, SpeakerRepository speakerRepository,SessionValidator sessionValidator) {
-        this.sessionRepository = sessionRepository;
-        this.roomRepository = roomRepository;
-        this.speakerRepository = speakerRepository;
-        this.sessionValidator = sessionValidator;
+
+    public SessionServiceImpl(SessionRepository sessionRepository,
+                              RoomRepository roomRepository,
+                              SpeakerRepository speakerRepository,
+                              QuestionRepository questionRepository,
+                              EventRepository eventRepository,
+                              SessionValidator sessionValidator) {
+        this.sessionRepository  = sessionRepository;
+        this.roomRepository     = roomRepository;
+        this.speakerRepository  = speakerRepository;
         this.questionRepository = questionRepository;
+        this.eventRepository    = eventRepository;
+        this.sessionValidator = sessionValidator;
     }
 
     @Override
@@ -97,4 +102,13 @@ public class SessionServiceImpl implements SessionService {
     public void removeSpeakerFromSession(String sessionId, String speakerId) {
         sessionRepository.deleteSpeaker(sessionId,speakerId);
     }
+
+    @Override
+    public List<Session> getSessionsByEventAndRoom(String eventId, String roomId) {
+        eventRepository.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
+        roomRepository.findRoomById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+        return sessionRepository.findByRoomIdAndEventId(roomId,eventId);
+    }
+
+
 }

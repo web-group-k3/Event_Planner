@@ -6,12 +6,13 @@ import com.k3.examen.model.Session;
 import com.k3.examen.repository.QuestionRepository;
 import com.k3.examen.repository.SessionRepository;
 import com.k3.examen.service.QuestionService;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-//@Service
+@Service
 public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
@@ -54,5 +55,12 @@ public class QuestionServiceImpl implements QuestionService {
                 .orElseThrow(() -> new ResourceNotFoundException("question not found: " + id));
         questionRepository.delete(id);
 
+    }
+
+    @Override
+    public void updateContent(String id, String newContent) {
+        questionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("question not found: " + id));
+        questionRepository.updateContent(id, newContent);
     }
 }

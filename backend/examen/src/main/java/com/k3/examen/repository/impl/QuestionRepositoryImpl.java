@@ -20,7 +20,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
                 .id(rs.getString("id"))
                 .sessionId(rs.getString("session_id"))
                 .content(rs.getString("content"))
-                .authorName(rs.getString("author_name"))
+                .authorName(rs.getString("author"))
                 .upvotes(rs.getInt("upvotes"))
                 .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
                 .build();
@@ -28,7 +28,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     @Override
     public List<Question> findBySessionId(String sessionId) {
         List<Question> list = new ArrayList<>();
-        String sql = "SELECT id,content,author_name,upvotes,created_at FROM question WHERE session_id = ? ORDER BY upvotes DESC, created_at ASC";
+        String sql = "SELECT id,content,author,session_id,upvotes,created_at FROM question WHERE session_id = ? ORDER BY upvotes DESC, created_at ASC";
         try (Connection conn = connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, sessionId);
@@ -36,13 +36,13 @@ public class QuestionRepositoryImpl implements QuestionRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         }catch (SQLException e) {
-            throw new RuntimeException("Error finding question by sessionId",e);
+            throw new RuntimeException("Error finding question by sessionId"+ sessionId+e.getMessage());
         }
         return list;
     }
     @Override
     public Optional<Question> findById(String id)  {
-        String sql = "SELECT id,session_id,content,author_name,created_at FROM question WHERE id = ?";
+        String sql = "SELECT id,session_id,content,author,upvotes,created_at FROM question WHERE id = ?";
         try (Connection conn = connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
@@ -50,13 +50,13 @@ public class QuestionRepositoryImpl implements QuestionRepository {
                 if (rs.next()) return Optional.of(mapRow(rs));
             }
         }catch (SQLException e) {
-            throw new RuntimeException("Error finding question by id",e);
+            throw new RuntimeException("Error finding question by id" + id +e.getMessage());
         }
         return Optional.empty();
     }
 
     public Question save(Question question) {
-        String sql = "INSERT INTO question (id,content, session_id, author_name, upvotes, created_at) VALUES (?,?, ?,?, 0,NOW()) RETURNING id, created_at";
+        String sql = "INSERT INTO question (id,content, session_id, author, upvotes, created_at) VALUES (?,?, ?,?, 0,NOW()) RETURNING id, created_at";
         try (Connection conn = connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,question.getId());
@@ -70,7 +70,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
                 }
             }
         }catch (SQLException e) {
-            throw new RuntimeException("Error saving question",e);
+            throw new RuntimeException("Error saving question" + e.getMessage());
         }
         return question;
     }
@@ -82,7 +82,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
              ps.setString(1, id);
              ps.executeUpdate();
         }catch (SQLException e) {
-            throw new RuntimeException("Error upvoting question",e);
+            throw new RuntimeException("Error upvoting question"+  e.getMessage());
         }
     }
     @Override
@@ -93,7 +93,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
             ps.setString(1, id);
             ps.executeUpdate();
         }catch (SQLException e) {
-            throw new RuntimeException("Error deleting question",e);
+            throw new RuntimeException("Error deleting question"+ e.getMessage());
         }
     }
 
@@ -106,7 +106,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
             ps.setString(2, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error updateContent question", e);
+            throw new RuntimeException("Error updateContent question" + e.getMessage());
         }
     }
 

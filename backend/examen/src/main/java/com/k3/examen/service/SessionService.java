@@ -15,4 +15,5 @@ public interface SessionService {
     void deleteSession(String id);
     void addSpeakerToSession(String sessionId, String speakerId);
     void removeSpeakerFromSession(String sessionId, String speakerId);
+    List<Session> getSessionsByEventAndRoom(String eventId, String roomId);
 }

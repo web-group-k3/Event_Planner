@@ -2,7 +2,9 @@ package com.k3.examen.validator;
 
 import com.k3.examen.dto.SessionDto;
 import com.k3.examen.model.Session;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SessionValidator {
     public  void validate(Session session) {
         if (session.getTitle() == null || session.getTitle().isBlank()) {

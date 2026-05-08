@@ -11,4 +11,6 @@ public interface EventService {
     Event createEvent(Event event);
     Event updateEvent(String id, Event event);
     void deleteEvent(String id);
+    List<Event> getEventsByRoom(String roomId);
+    List<Event> getEventsBySpeaker(String speakerId);
 }

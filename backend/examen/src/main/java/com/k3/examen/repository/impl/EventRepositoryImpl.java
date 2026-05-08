@@ -36,7 +36,7 @@ public class EventRepositoryImpl implements EventRepository {
            ResultSet rs = stmt.executeQuery();
            while (rs.next()) events.add(mapRow(rs));
        }catch (SQLException e) {
-           throw new RuntimeException("Error finding all events",e);
+           throw new RuntimeException("Error finding all events" + e.getMessage());
        }
        return events;
     }
@@ -52,12 +52,12 @@ public class EventRepositoryImpl implements EventRepository {
                 }
             }
         }catch (SQLException e){
-            throw new RuntimeException("Error finding event by id",e);
+            throw new RuntimeException("Error finding event by id" + e.getMessage());
         }
         return Optional.empty();
     }
     public Event save(Event event)  {
-        String sql = "INSERT INTO event (id,title, description, start_date, end_date, location) VALUES (?,?, ?, ?, ?, ?) RETURNING *";
+        String sql = "INSERT INTO event (id,title, description, start_date, end_date, location) VALUES (?,?, ?, ?, ?, ?) ";
         try(Connection conn = databaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, event.getId());
@@ -68,7 +68,7 @@ public class EventRepositoryImpl implements EventRepository {
             stmt.setString(6, event.getLocation());
             stmt.executeUpdate();
         }catch (SQLException e){
-            throw new RuntimeException("Error saving event",e);
+            throw new RuntimeException("Error saving event" + e.getMessage());
         }
         return event;
     }
@@ -84,7 +84,7 @@ public class EventRepositoryImpl implements EventRepository {
             stmt.setString(6, event.getId());
             stmt.executeUpdate();
         }catch (SQLException e){
-            throw new RuntimeException("Error updating event",e);
+            throw new RuntimeException("Error updating event" + e.getMessage());
         }
         return event;
     }
@@ -95,7 +95,7 @@ public class EventRepositoryImpl implements EventRepository {
             stmt.setString(1, id);
             stmt.executeUpdate();
         }catch (SQLException e){
-            throw new RuntimeException("Error deleting event",e);
+            throw new RuntimeException("Error deleting event" + e.getMessage());
         }
 
         return true;
@@ -117,7 +117,7 @@ public class EventRepositoryImpl implements EventRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("no Event in this room", e);
+            throw new RuntimeException("no Event in this room" + e.getMessage());
         }
         return list;
     }
@@ -139,7 +139,7 @@ public class EventRepositoryImpl implements EventRepository {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("this speaker have no event", e);
+            throw new RuntimeException("this speaker have no event" +   e.getMessage());
         }
         return list;
     }

@@ -9,38 +9,24 @@ import java.sql.SQLException;
 @Component
 public class DatabaseConnection {
 
-    private static final String URL =System.getenv("DB_URL");
-    private static final String USERNAME =System.getenv("DB_USERNAME");
-    private static final String PASSWORD =System.getenv("DB_PASSWORD");
-    private static Connection connection = null;
-    private DatabaseConnection() {}
+    private static final String URL = System.getenv("DB_URL");
+    private static final String USERNAME = System.getenv("DB_USERNAME");
+    private static final String PASSWORD = System.getenv("DB_PASSWORD");
+    private static final String DRIVER = "org.postgresql.Driver";
 
-    public static synchronized Connection getConnection() throws SQLException {
-        if (URL == null || USERNAME == null || PASSWORD == null) {
-            throw new IllegalStateException(
-                    "Variables d'environnement DB_URL / DB_USERNAME / DB_PASSWORD manquantes"
-            );
-        }
+    public static Connection getConnection() {
+
         try {
-            Class.forName("org.postgresql.Driver"); // chargement explicite du driver
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Driver PostgreSQL introuvable", e);
-        }
-        if (connection == null || connection.isClosed()) {
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Connexion à la base de données réussie.");
-        }
-        return connection;
-    }
-    public static synchronized void closeConnection() {
-        if (connection != null) {
-            try {
-                connection.close();
-                connection = null;
-                System.out.println("Connexion fermée.");
-            } catch (SQLException e) {
-                System.err.println("Erreur lors de la fermeture : " + e.getMessage());
-            }
+            Class.forName(DRIVER);
+
+            System.out.println(URL);
+            System.out.println(USERNAME);
+            System.out.println(PASSWORD);
+
+            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur connexion DB : " + e.getMessage());
         }
     }
 }
