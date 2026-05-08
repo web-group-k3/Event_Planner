@@ -11,6 +11,6 @@ public interface EventRepository {
     Optional<Event> findById(String id);
     Event save(Event event);
     Event update(Event event);
-    void delete(String id);
+    boolean delete(String id);
     List<Event> findByRoom(Room room);
 }
