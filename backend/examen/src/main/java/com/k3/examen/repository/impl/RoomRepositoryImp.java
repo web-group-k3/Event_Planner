@@ -134,4 +134,63 @@ public class RoomRepositoryImp implements RoomRepository {
             throw new RuntimeException("Error in deleting room", e);
         }
     }
+
+    @Override
+    public List<Room> findByEventId(String eventId) {
+        String sql = """
+        SELECT DISTINCT r.* FROM rooms r
+        JOIN sessions s ON s.room_id = r.id
+        WHERE s.event_id = ?
+        ORDER BY r.name
+        """;
+        List<Room> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, eventId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error findByEventId rooms", e);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Room> findBySpeakerId(String speakerId) {
+        String sql = """
+        SELECT DISTINCT r.* FROM rooms r
+        JOIN sessions s ON s.room_id = r.id
+        JOIN session_speakers ss ON ss.session_id = s.id
+        WHERE ss.speaker_id = ?
+        ORDER BY r.name
+        """;
+        List<Room> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, speakerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error findBySpeakerId rooms", e);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Room> findByAddress(String address) {
+        String sql = "SELECT * FROM rooms WHERE address ILIKE ? ORDER BY name";
+        List<Room> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + address + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error findByAddress rooms", e);
+        }
+        return list;
+    }
 }

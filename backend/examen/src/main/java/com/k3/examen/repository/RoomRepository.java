@@ -13,5 +13,7 @@ public interface RoomRepository {
     Room save(Room room);
     Room update(String id, RoomUpdateRequest request);
     boolean delete(String id);
-
+    List<Room> findByEventId(String eventId);
+    List<Room> findBySpeakerId(String speakerId);
+    List<Room> findByAddress(String address);
 }
