@@ -1,8 +1,6 @@
 package com.k3.examen.repository;
 
-import com.k3.examen.model.Room;
 import com.k3.examen.model.Session;
-import com.k3.examen.model.Speaker;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +11,7 @@ public interface SessionRepository {
     Optional<Session> findById(String id);
     List<Session> findByEventId(String EventId);
     List<Session> findByRoomId(String RoomId);
-    List<Session> findByRoomIdAndEventId(String roomId, String EventId);
+    List<Session> findByRoomIdAndEventId(String roomId, String eventId);
     Session save(Session session);
     Session update(Session session);
     void delete(String id);

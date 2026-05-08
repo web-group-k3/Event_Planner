@@ -2,7 +2,6 @@ package com.k3.examen.repository.impl;
 
 import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Session;
-import com.k3.examen.model.Speaker;
 import com.k3.examen.repository.SessionRepository;
 import org.springframework.stereotype.Repository;
 
@@ -72,8 +71,24 @@ public class SessionRepositoryImpl implements SessionRepository {
     }
 
     @Override
-    public List<Session> findByRoomIdAndEventId(String roomId, String EventId) {
-        return List.of();
+    public List<Session> findByRoomIdAndEventId(String roomId, String eventId) {
+        String sql = """
+        SELECT * FROM sessions
+        WHERE event_id = ? AND room_id = ?
+        ORDER BY start_time
+        """;
+        List<Session> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, eventId);
+            ps.setString(2, roomId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error findByEventIdAndRoomId", e);
+        }
+        return list;
     }
 
     @Override
