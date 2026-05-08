@@ -12,23 +12,27 @@ public class DatabaseConnection {
     private static final String URL =System.getenv("DB_URL");
     private static final String USERNAME =System.getenv("DB_USERNAME");
     private static final String PASSWORD =System.getenv("DB_PASSWORD");
-    private static final String DRIVER = "org.postgresql.Driver";
     private static Connection connection = null;
-    public static Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
-        try {
-            connection=DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Connexion à la base de données réussie.");
-        } catch (SQLException e) {
-            System.err.println("Erreur de connexion : " + e.getMessage());
-            throw new RuntimeException(e);
+    private DatabaseConnection() {}
 
+    public static synchronized Connection getConnection() throws SQLException {
+        if (URL == null || USERNAME == null || PASSWORD == null) {
+            throw new IllegalStateException(
+                    "Variables d'environnement DB_URL / DB_USERNAME / DB_PASSWORD manquantes"
+            );
         }
-
-    }
+        try {
+            Class.forName("org.postgresql.Driver"); // chargement explicite du driver
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Driver PostgreSQL introuvable", e);
+        }
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            System.out.println("Connexion à la base de données réussie.");
+        }
         return connection;
-}
-    public static void closeConnection() {
+    }
+    public static synchronized void closeConnection() {
         if (connection != null) {
             try {
                 connection.close();
@@ -38,4 +42,5 @@ public class DatabaseConnection {
                 System.err.println("Erreur lors de la fermeture : " + e.getMessage());
             }
         }
-    }}
+    }
+}

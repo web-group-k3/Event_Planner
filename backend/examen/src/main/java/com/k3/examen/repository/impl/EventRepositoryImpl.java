@@ -100,7 +100,48 @@ public class EventRepositoryImpl implements EventRepository {
 
         return true;
     }
-    public List<Event> findByRoom(Room room) {
-        return null;
+
+    @Override
+    public List<Event> findByRoomId(String roomId) {
+        String sql = """
+        SELECT DISTINCT e.* FROM events e
+        JOIN sessions s ON s.event_id = e.id
+        WHERE s.room_id = ?
+        ORDER BY e.start_date
+        """;
+        List<Event> list = new ArrayList<>();
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, roomId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("no Event in this room", e);
+        }
+        return list;
     }
+
+    @Override
+    public List<Event> findBySpeakerId(String speakerId) {
+        String sql = """
+        SELECT DISTINCT e.* FROM events e
+        JOIN sessions s ON s.event_id = e.id
+        JOIN session_speakers ss ON ss.session_id = s.id
+        WHERE ss.speaker_id = ?
+        ORDER BY e.start_date
+        """;
+        List<Event> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, speakerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("this speaker have no event", e);
+        }
+        return list;
+    }
+
 }
