@@ -9,15 +9,13 @@ import java.util.Optional;
 
 public interface SessionRepository {
     List<Session> findAll();
+    void deleteSpeaker(String sessionId, String speakerId);
     Optional<Session> findById(String id);
     List<Session> findByEventId(String EventId);
-    List<Session> findByRoomId(Room room);
-    List<Session> findByRoomId(String roomId);
+    List<Session> findByRoomId(String RoomId);
     List<Session> findByRoomIdAndEventId(String roomId, String EventId);
     Session save(Session session);
     Session update(Session session);
-    void delete(Session session);
-    void addSpeaker(Speaker speakerId);
-    void deleteSpeaker(String sessionId,Speaker speakerId);
-
+    void delete(String id);
+    void addSpeaker(String sessionId, String speakerId);
 }

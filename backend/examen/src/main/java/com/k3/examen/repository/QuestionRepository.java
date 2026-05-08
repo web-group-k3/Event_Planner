@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface QuestionRepository {
-    List<Question> findAll();
     List<Question> findBySessionId(String sessionId);
     Optional<Question> findById(String id);
     Question save(Question question);

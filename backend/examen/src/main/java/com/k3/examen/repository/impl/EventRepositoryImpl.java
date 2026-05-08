@@ -65,9 +65,7 @@ public class EventRepositoryImpl implements EventRepository {
             stmt.setTimestamp(4, Timestamp.valueOf(event.getStartDate()));
             stmt.setTimestamp(5, Timestamp.valueOf(event.getEndDate()));
             stmt.setString(6, event.getLocation());
-            try (ResultSet rs = stmt.executeQuery();){
-                if (rs.next()) return mapRow(rs);
-            }
+            stmt.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException("Error saving event",e);
         }

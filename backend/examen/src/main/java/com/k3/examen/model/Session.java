@@ -17,7 +17,7 @@ public class Session {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer guestNumber;
-    private Room roomId;
+    private String roomId;
     private String eventId;
     private List<Speaker> speakers;
     private List<Question> questions;

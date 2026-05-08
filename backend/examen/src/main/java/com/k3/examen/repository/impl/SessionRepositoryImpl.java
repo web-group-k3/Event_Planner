@@ -1,8 +1,6 @@
 package com.k3.examen.repository.impl;
 
 import com.k3.examen.config.DatabaseConnection;
-import com.k3.examen.model.Event;
-import com.k3.examen.model.Room;
 import com.k3.examen.model.Session;
 import com.k3.examen.model.Speaker;
 import com.k3.examen.repository.SessionRepository;
@@ -10,174 +8,172 @@ import com.k3.examen.repository.SessionRepository;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class SessionRepositoryImpl implements SessionRepository {
     private final DatabaseConnection databaseConnection;
-    public SessionRepository(DatabaseConnection databaseConnection) {
+    public SessionRepositoryImpl(DatabaseConnection databaseConnection) {
         this.databaseConnection = databaseConnection;
     }
     private Session mapRow(ResultSet rs) throws SQLException {
-        Session session = new Session();
-        session.setId(rs.getString("id"));
-        session.setTitle(rs.getString("title"));
-        session.setDescription(rs.getString("description"));
-        session.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
-        session.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
-        session.setGuestNumber(rs.getInt("guestNumber"));
-        Event event = new Event();
-        event.setId(rs.getString("id"));
-        session.setEventId(event);
-        Room room = new Room();
-        room.setId(rs.getString("id"));
-        session.setRoomId(room);
-        List<Speaker> speakers = new ArrayList<>();
-        Speaker speaker = new Speaker();
-        speaker.setFullName(rs.getString("full_name"));
-        speakers.add(speaker);
-        session.setSpeakers(speakers);
-        return session;
+        return Session.builder()
+                .id(rs.getString("id"))
+                .title(rs.getString("title"))
+                .description(rs.getString("description"))
+                .startTime(rs.getTimestamp("start_time").toLocalDateTime())
+                .endTime(rs.getTimestamp("end_time").toLocalDateTime())
+                .guestNumber(rs.getInt("guestNumber"))
+                .build();
     }
-    public List<Session> findByEventId(String eventId) throws SQLException {
+    // FIND ALL SESSION
+    @Override
+    public List<Session> findAll() {
+        String sql = "SELECT id,title,description,start_time,end_time,guestNumber,event_id,room_id FROM session";
+        List<Session> list = new ArrayList<>();
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) list.add(mapRow(rs));
+        } catch (SQLException e) {
+            throw new RuntimeException("Error findAll sessions", e);
+        }
+        return list;
+    }
+    @Override
+    public List<Session> findByEventId(String eventId)  {
         List<Session> sessions = new ArrayList<>();
-        String sql = "SELECT * FROM session WHERE event_id = ? ORDER BY start_time";
-        Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setString(1, eventId);
-        ResultSet rs = stmt.executeQuery();
-        while (rs.next()) sessions.add(mapRow(rs));
+        String sql = "SELECT id,title,description,start_time,end_time,guestNumber,event_id,room_id  FROM session WHERE event_id = ? ORDER BY start_time";
+        try(Connection conn = databaseConnection.getConnection()){
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, eventId);
+            try(ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) sessions.add(mapRow(rs));
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("Error find sessions by event id", e);
+        }
         return sessions;
     }
-    public List<Session> findByEventIdAndRoomId(String  eventId, String roomId) {
+    @Override
+    public List<Session> findByRoomId(String RoomId) {
         List<Session> sessions = new ArrayList<>();
-        String sql = "SELECT * FROM session WHERE event_id = ? AND room_id = ? ORDER BY start_time";
+        String sql = "SELECT id,title,description,start_time,end_time,guestNumber,event_id,room_id FROM session WHERE room_id = ? ORDER BY start_time";
         try(Connection conn= DatabaseConnection.getConnection()) {
             PreparedStatement ps=conn.prepareStatement(sql);
-            ps.setString(1, eventId);
-            ps.setString(2, roomId);
-            ResultSet rs=ps.executeQuery();
-            while (rs.next()) sessions.add(mapRow(rs));
-            return sessions;
-
-        }catch (
-                SQLException e
-        ){
-            throw new RuntimeException("Erreur lors de la lecture de la session");
+            ps.setString(1, RoomId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) sessions.add(mapRow(rs));
+            }
+        }catch(SQLException e){
+            throw new RuntimeException("Error finding session by room id " + RoomId, e);
         }
-
+        return sessions;
     }
-    public Session findById(String id) throws SQLException {
-        String sql = "SELECT * FROM session WHERE id = ?";
-        try(Connection conn= DatabaseConnection.getConnection()) {
+
+    @Override
+    public List<Session> findByRoomIdAndEventId(String roomId, String EventId) {
+        return List.of();
+    }
+
+    @Override
+    public Session save(Session session) {
+            String sql = "INSERT INTO session (id,title, description, start_time, end_time, guest_Number, event_id, room_id) VALUES (?,?, ?, ?, ?, ?, ?, ?) RETURNING id";
+            try(Connection conn = databaseConnection.getConnection()) {
             PreparedStatement ps=conn.prepareStatement(sql);
-            ps.setString(1, id);
-            ResultSet rs=ps.executeQuery();
-            if (rs.next()) return mapRow(rs);
-
-        }catch (
-                SQLException e
-        ){
-            throw new RuntimeException("Erreur lors de la lecture de la session");
-        }
-        throw new RuntimeException("Erreur lors de la lecture de la session");
-    }
-
-    public List<Session> findByRoomId(String roomId) throws SQLException {
-        List<Session> sessions = new ArrayList<>();
-        String sql = "SELECT * FROM session WHERE room_id = ?";
-        try(Connection conn= DatabaseConnection.getConnection()) {
-            PreparedStatement ps=conn.prepareStatement(sql);
-            ps.setString(1, roomId);
-            ResultSet rs=ps.executeQuery();
-            while (rs.next()) sessions.add(mapRow(rs));
-            return sessions;
-        }
-        catch (SQLException e){
-            throw new RuntimeException("Erreur lors de la lecture de la session");
-        }
-    }
-    public Session create(Session session, List<String> speakersIds)  {
-        try(Connection connection= DatabaseConnection.getConnection()) {
-            String sql = "INSERT INTO session (id,title, description, start_time, end_time, guest_Number, event_id, room_id) VALUES (?,?, ?, ?, ?, ?, ?, ?) RETURNING *";
-            PreparedStatement ps=connection.prepareStatement(sql);
             ps.setString(1, session.getId());
             ps.setString(2, session.getTitle());
             ps.setString(3, session.getDescription());
             ps.setTimestamp(4, Timestamp.valueOf(session.getStartTime()));
             ps.setTimestamp(5,Timestamp.valueOf(session.getEndTime()));
-            ps.setInt(6, session.getGuestNumber());
-            Event event = new Event();
-            ps.setString(7, event.getId());
-            Room room = new Room();
-            ps.setString(8, room.getId());
-            ResultSet rs=ps.executeQuery();
-            if (rs.next()) {
-                Session saved = mapRow(rs);
-                if (speakersIds != null) {
-                    for (String speakerId : speakersIds) {
-                        String linkSql = "INSERT INTO session_speaker (session_id, speaker_id) VALUES (?, ?)";
-                        PreparedStatement linkStmt = connection.prepareStatement(linkSql);
-                        linkStmt.setString(1, saved.getId());
-                        linkStmt.setString(2, speakerId);
-                        linkStmt.executeUpdate();
-                    }
-                }
-            }
+            ps.setObject(6, session.getGuestNumber());
+            ps.setObject(7, session.getEventId());
+            ps.setObject(8, session.getRoomId());
+            ps.executeUpdate();
         }catch (SQLException e){
-            throw new RuntimeException("Erreur lors de la lecture de la session");
+            throw new RuntimeException("Error saving session", e);
         }
-        throw new RuntimeException("Erreur lors de la lecture de la session");
+        return session;
     }
 
-    public Session update(String id,Session session, List<String> speakersIds)  {
-        try(Connection conn= DatabaseConnection.getConnection()) {
-            String sql = "UPDATE session SET title=?, description=?, start_time=?, end_time=?, guest_Number=?, room_id=? WHERE id=? RETURNING *";
-            PreparedStatement ps=conn.prepareStatement(sql);
-            ps.setString(1, session.getTitle());
-            ps.setString(2, session.getDescription());
-            ps.setTimestamp(3, Timestamp.valueOf(session.getStartTime()));
-            ps.setTimestamp(4, Timestamp.valueOf(session.getEndTime()));
-            ps.setInt(5, session.getGuestNumber());
-            Room room = new Room();
-            ps.setString(6, room.getId());
-            ps.setString(7, id);
-            ResultSet rs=ps.executeQuery();
-            if (rs.next()) {
-                Session updated = mapRow(rs);
-                if (speakersIds != null) {
-                    conn.prepareStatement("DELETE FROM session_speaker WHERE session_id = " + id).executeUpdate();
-                    for (String speakerId : speakersIds) {
-                        String linkSql = "INSERT INTO session_speaker (session_id, speaker_id) VALUES (?, ?)";
-                        PreparedStatement linkStmt = conn.prepareStatement(linkSql);
-                        linkStmt.setString(1, id);
-                        linkStmt.setString(2, speakerId);
-                        linkStmt.executeUpdate();
-                    }
-                }
-                return updated;
-            }
-        }catch (SQLException e){
-            throw new RuntimeException("Erreur lors de la lecture de la session");
+    @Override
+    public Session update(Session session) {
+        String sql = """
+            UPDATE session
+            SET event_id = ?, room_id = ?, title = ?, description = ?,
+                start_time = ?, end_time = ?, guestNumber = ?
+            WHERE id = ?
+            """;
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, session.getEventId());
+            ps.setString(2, session.getRoomId());
+            ps.setString(3, session.getTitle());
+            ps.setString(4, session.getDescription());
+            ps.setTimestamp(5, Timestamp.valueOf(session.getStartTime()));
+            ps.setTimestamp(6, Timestamp.valueOf(session.getEndTime()));
+            if (session.getGuestNumber() != null) ps.setInt(7, session.getGuestNumber());
+            else ps.setNull(7, Types.INTEGER);
+            ps.setString(8, session.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating session", e);
         }
-        throw new RuntimeException("Erreur lors de la lecture de la session");
+        return session;
     }
-    public boolean delete(String id) throws SQLException {
-        String sql = "DELETE FROM session WHERE id=?";
-        try(Connection conn= DatabaseConnection.getConnection()) {
+
+    @Override
+    public void delete(String id) {
+        String sql = "DELETE FROM session WHERE id = ?";
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error delete session", e);
+        }
+    }
+
+    @Override
+    public void addSpeaker(String sessionId, String speakerId) {
+        String sql = "INSERT INTO session_speakers (session_id, speaker_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, sessionId);
+            ps.setString(2, speakerId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur addSpeaker", e);
+        }
+    }
+
+    @Override
+    public void deleteSpeaker(String sessionId, String speakerId) {
+        String sql = "DELETE FROM session_speakers WHERE session_id = ? AND speaker_id = ?";
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, sessionId);
+            ps.setString(2, speakerId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error removeSpeaker", e);
+        }
+    }
+
+    @Override
+    public Optional<Session> findById(String id)  {
+        String sql = "SELECT id,title,description,start_time,end_time,guestNumber FROM session WHERE id = ? ORDER BY start_time";
+        try(Connection conn= databaseConnection.getConnection()) {
             PreparedStatement ps=conn.prepareStatement(sql);
             ps.setString(1, id);
-            return ps.executeUpdate()>0;
-
-        }
-    }
-    public boolean isLive(Long sessionId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM session WHERE id = ? AND NOW() BETWEEN start_time AND end_time";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, sessionId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt(1) > 0;
+            try(ResultSet rs=ps.executeQuery()){
+                if (rs.next()) return Optional.of(mapRow(rs));
             }
+        }catch (
+                SQLException e
+        ){
+            throw new RuntimeException("Error finding session by id " + id, e);
         }
-        return false;
+        return Optional.empty();
     }
+
 }

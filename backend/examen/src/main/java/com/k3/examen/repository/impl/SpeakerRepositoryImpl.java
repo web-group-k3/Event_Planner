@@ -68,7 +68,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     // CREATE NEW SPEAKER
     @Override
     public Speaker save(Speaker speaker) {
-        String sql = "INSERT INTO speaker (id,full_name, photo_url, bio, links, event_id) VALUES (?,?, ?, ?, ?, ?) RETURNING id";
+        String sql = "INSERT INTO speaker (id,full_name, photo_url, bio, links) VALUES (?,?, ?, ?, ?) RETURNING id";
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,speaker.getId());
@@ -76,9 +76,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
             ps.setString(3, speaker.getPhotoUrl());
             ps.setString(4, speaker.getBio());
             ps.setString(5, speaker.getLinks());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) speaker.setId(rs.getString("id"));
-            }
+            ps.executeUpdate();
         }catch (SQLException e) {
             throw new RuntimeException("Error saving speaker ",e);
         }
@@ -86,7 +84,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     }
     @Override
     public Speaker update( Speaker speaker)  {
-        String sql = "UPDATE speaker SET full_name=?, photo_url=?, bio=?, links=?, event_id=? WHERE id=?";
+        String sql = "UPDATE speaker SET full_name=?, photo_url=?, bio=?, links=?WHERE id=?";
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, speaker.getFullName());
@@ -112,31 +110,6 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
         return true;
     }
 
-    /*public List<Session> findSessionsBySpeakerId(Long speakerId) throws SQLException {
-        List<Session> list = new ArrayList<>();
-        String sql = "SELECT s.id, s.title, s.start_time, s.end_time, s.room_id, s.event_id " +
-                "FROM session s " +
-                "JOIN session_speaker ss ON ss.session_id = s.id " +
-                "WHERE ss.speaker_id = ? " +
-                "ORDER BY s.start_time";
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, speakerId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(Session.builder()
-                            .id(rs.getLong("id"))
-                            .title(rs.getString("title"))
-                            .startTime(rs.getTimestamp("start_time").toLocalDateTime())
-                            .endTime(rs.getTimestamp("end_time").toLocalDateTime())
-                            .roomId(rs.getLong("room_id"))
-                            .eventId(rs.getLong("event_id"))
-                            .build());
-                }
-            }
-        }
-        return list;
-    }*/
     @Override
    public List<Speaker> findBySessionId(String sessionId){
         String sql = """
