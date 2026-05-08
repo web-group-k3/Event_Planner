@@ -112,7 +112,51 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     }
 
     @Override
-   public List<Speaker> findBySessionId(String sessionId){
+    public List<Speaker> findByRoomId(String roomId) {
+        String sql = """
+        SELECT DISTINCT sp.* FROM speakers sp
+        JOIN session_speakers ss ON ss.speaker_id = sp.id
+        JOIN sessions s ON s.id = ss.session_id
+        WHERE s.room_id = ?
+        ORDER BY sp.full_name
+        """;
+        List<Speaker> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, roomId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error findByRoomId speakers", e);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Speaker> findByEventId(String eventId) {
+        String sql = """
+        
+                SELECT DISTINCT sp.* FROM speakers sp
+        JOIN session_speakers ss ON ss.speaker_id = sp.id
+        JOIN sessions s ON s.id = ss.session_id
+        WHERE s.event_id = ?
+        ORDER BY sp.full_name
+        """;
+        List<Speaker> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, eventId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur findByEventId speakers", e);
+        }
+        return list;
+    }
+    @Override
+    public List<Speaker> findBySessionId(String sessionId){
         String sql = """
             SELECT s.* FROM speakers s
             JOIN session_speakers ss ON ss.speaker_id = s.id

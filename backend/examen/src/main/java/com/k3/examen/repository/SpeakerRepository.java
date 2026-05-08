@@ -19,4 +19,6 @@ public interface SpeakerRepository {
     Speaker save(Speaker speaker);
     Speaker update(Speaker speaker);
     boolean delete(String id);
+    List<Speaker> findByRoomId(String roomId);
+    List<Speaker> findByEventId(String eventId);
 }
