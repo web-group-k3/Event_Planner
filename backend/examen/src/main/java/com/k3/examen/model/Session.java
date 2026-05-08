@@ -19,6 +19,7 @@ public class Session {
     private Integer guestNumber;
     private String roomId;
     private String eventId;
+    private Room room;
     private List<Speaker> speakers;
     private List<Question> questions;
     public boolean isLive() {

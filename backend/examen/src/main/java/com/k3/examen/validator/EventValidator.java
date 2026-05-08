@@ -1,21 +1,21 @@
 package com.k3.examen.validator;
 
 import com.k3.examen.dto.EventDto;
-
+import com.k3.examen.model.Event;
 public class EventValidator {
 
-    public static void validate(EventDto dto) {
-        if (dto.getTitle() == null || dto.getTitle().isBlank()) {
-            throw new IllegalArgumentException("Le titre de l'événement est obligatoire");
+    public void validate(Event event) {
+        if (event.getTitle() == null || event.getTitle().isBlank()) {
+            throw new IllegalArgumentException("title cannot be blank");
         }
-        if (dto.getStartDate() == null) {
-            throw new IllegalArgumentException("La date de début est obligatoire");
+        if (event.getStartDate() == null) {
+            throw new IllegalArgumentException("date cannot be null");
         }
-        if (dto.getEndDate() == null) {
-            throw new IllegalArgumentException("La date de fin est obligatoire");
+        if (event.getEndDate() == null) {
+            throw new IllegalArgumentException("date cannot be null");
         }
-        if (dto.getEndDate().isBefore(dto.getStartDate())) {
-            throw new IllegalArgumentException("La date de fin doit être après la date de début");
+        if (event.getEndDate().isBefore(event.getStartDate())) {
+            throw new IllegalArgumentException("date cannot be before start date");
         }
     }
 }

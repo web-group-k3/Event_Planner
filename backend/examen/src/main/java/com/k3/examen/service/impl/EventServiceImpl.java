@@ -15,11 +15,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class EventServiceImpl implements EventService {
+    private final EventValidator eventValidator;
     private final EventRepository eventRepository;
     private final SessionRepository sessionRepository;
-    public EventServiceImpl(EventRepository eventRepository, SessionRepository sessionRepository) {
+    public EventServiceImpl(EventRepository eventRepository,EventValidator eventValidator, SessionRepository sessionRepository) {
         this.eventRepository = eventRepository;
         this.sessionRepository = sessionRepository;
+        this.eventValidator = eventValidator;
     }
     @Override
     public List<Event> getAllEvents() {
@@ -41,14 +43,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event createEvent(Event event) {
-        validateEvent(event);
+        eventValidator.validate(event);
         return eventRepository.save(event);
     }
 
     @Override
     public Event updateEvent(String id, Event event) {
         getEventById(id);
-        validateEvent(event);
+        eventValidator.validate(event);
         event.setId(id);
         return eventRepository.update(event);
     }
@@ -58,12 +60,5 @@ public class EventServiceImpl implements EventService {
         getEventById(id);
         eventRepository.delete(id);
     }
-    private void validateEvent(Event event) {
-        if (event.getTitle() == null || event.getTitle().isBlank())
-            throw new IllegalArgumentException("title is blank");
-        if (event.getStartDate() == null || event.getEndDate() == null)
-            throw new IllegalArgumentException("date are blank");
-        if (event.getEndDate().isBefore(event.getStartDate()))
-            throw new IllegalArgumentException("end date is before start date");
-    }
+
 }

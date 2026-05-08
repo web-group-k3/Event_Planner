@@ -1,23 +1,22 @@
 package com.k3.examen.validator;
 
 import com.k3.examen.dto.SessionDto;
+import com.k3.examen.model.Session;
 
 public class SessionValidator {
-    public static void validate(SessionDto dto) {
-        if (dto.getTitle() == null || dto.getTitle().isBlank()) {
-            throw new IllegalArgumentException("Le titre de la session est obligatoire");
+    public  void validate(Session session) {
+        if (session.getTitle() == null || session.getTitle().isBlank()) {
+            throw new IllegalArgumentException("title is blank");
         }
-        if (dto.getStartTime() == null) {
-            throw new IllegalArgumentException("L'heure de début est obligatoire");
+        if (session.getStartTime() == null) {
+            throw new IllegalArgumentException("time is null");
         }
-        if (dto.getEndTime() == null) {
-            throw new IllegalArgumentException("L'heure de fin est obligatoire");
+        if (session.getEndTime() == null) {
+            throw new IllegalArgumentException("endTime is null");
         }
-        if (dto.getEndTime().isBefore(dto.getStartTime())) {
-            throw new IllegalArgumentException("L'heure de fin doit être après l'heure de début");
+        if (session.getEndTime().isBefore(session.getStartTime())) {
+            throw new IllegalArgumentException("start time is before end time");
         }
-        if (dto.getRoomId() == null) {
-            throw new IllegalArgumentException("La salle est obligatoire");
-        }
+
     }
 }
