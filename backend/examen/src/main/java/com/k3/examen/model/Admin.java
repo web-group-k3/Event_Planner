@@ -4,18 +4,18 @@ import lombok.*;
 
 
 public class Admin {
-    private Integer id;
+    private String id;
     private String username;
     private String passwordHash;
 
     public Admin() {
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -35,7 +35,7 @@ public class Admin {
         this.passwordHash = passwordHash;
     }
 
-    public Admin(Integer id, String username, String passwordHash) {
+    public Admin(String id, String username, String passwordHash) {
         this.id = id;
         this.username = username;
         this.passwordHash = passwordHash;

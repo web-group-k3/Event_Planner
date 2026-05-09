@@ -1,6 +1,6 @@
 package com.k3.examen.config;
 
-import com.k3.examen.service.UserDetailsServiceImpl; // ou ton UserDetailsService
+import com.k3.examen.service.impl.UserDetailsServiceImpl; // ou ton UserDetailsService
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

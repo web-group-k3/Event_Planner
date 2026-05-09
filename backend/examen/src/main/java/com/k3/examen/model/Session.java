@@ -1,31 +1,35 @@
 package com.k3.examen.model;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
+import java.util.List;
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
 public class Session {
-    private Long id;
+    private String id;
     private String title;
+    private String description;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Long roomId;
-    private Long eventId;
+    private Integer guestNumber;
+    private String roomId;
+    private String eventId;
+    private Room room;
+    private List<Speaker> speakers;
+    private List<Question> questions;
+    public boolean isLive() {
+        LocalDateTime now = LocalDateTime.now();
+        return now.isAfter(startTime) && now.isBefore(endTime);
+    }
 
-    public Session() {}
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public LocalDateTime getStartTime() { return startTime; }
-    public void setStartTime(LocalDateTime v) { this.startTime = v; }
-    public LocalDateTime getEndTime() { return endTime; }
-    public void setEndTime(LocalDateTime v) { this.endTime = v; }
-    public Long getRoomId() { return roomId; }
-    public void setRoomId(Long roomId) { this.roomId = roomId; }
-    public Long getEventId() { return eventId; }
-    public void setEventId(Long eventId) { this.eventId = eventId; }
 
-    public static Builder builder() { return new Builder(); }
+    /*public static Builder builder() { return new Builder(); }
 
     public static class Builder {
         private final Session s = new Session();
@@ -36,5 +40,5 @@ public class Session {
         public Builder roomId(Long v) { s.roomId = v; return this; }
         public Builder eventId(Long v) { s.eventId = v; return this; }
         public Session build() { return s; }
-    }
+    }*/
 }

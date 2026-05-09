@@ -9,33 +9,24 @@ import java.sql.SQLException;
 @Component
 public class DatabaseConnection {
 
-    private static final String URL =System.getenv("DB_URL");
-    private static final String USERNAME =System.getenv("DB_USERNAME");
-    private static final String PASSWORD =System.getenv("DB_PASSWORD");
+    private static final String URL = System.getenv("DB_URL");
+    private static final String USERNAME = System.getenv("DB_USERNAME");
+    private static final String PASSWORD = System.getenv("DB_PASSWORD");
     private static final String DRIVER = "org.postgresql.Driver";
-    private static Connection connection = null;
-    public static Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
+
+    public static Connection getConnection() {
+
         try {
-            connection=DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Connexion à la base de données réussie.");
-        } catch (SQLException e) {
-            System.err.println("Erreur de connexion : " + e.getMessage());
-            throw new RuntimeException(e);
+            Class.forName(DRIVER);
 
+            System.out.println(URL);
+            System.out.println(USERNAME);
+            System.out.println(PASSWORD);
+
+            return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur connexion DB : " + e.getMessage());
         }
-
     }
-        return connection;
 }
-    public static void closeConnection() {
-        if (connection != null) {
-            try {
-                connection.close();
-                connection = null;
-                System.out.println("Connexion fermée.");
-            } catch (SQLException e) {
-                System.err.println("Erreur lors de la fermeture : " + e.getMessage());
-            }
-        }
-    }}

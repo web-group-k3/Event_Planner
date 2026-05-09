@@ -3,14 +3,17 @@ package com.k3.examen.controller;
 
 import com.k3.examen.model.Question;
 import com.k3.examen.service.QuestionService;
+import com.k3.examen.service.impl.QuestionServiceImpl;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
-//@RestController
+@RestController
 @RequestMapping("/api/questions")
 public class QuestionController {
 
@@ -20,25 +23,34 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @GetMapping("/session/{sessionId}")
-    public ResponseEntity<List<Question>> getBySession(@PathVariable Long sessionId) throws SQLException {
-        return ResponseEntity.ok(questionService.getBySession(sessionId));
+    @GetMapping
+    public ResponseEntity<List<Question>> getBySession(@RequestParam String sessionId) {
+        return ResponseEntity.ok(questionService.getQuestionsBySession(sessionId));
     }
 
     @PostMapping
-    public ResponseEntity<Question> create(@RequestBody Question question) throws SQLException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(questionService.create(question));
+    public ResponseEntity<Question> create(
+            @RequestParam String sessionId,
+            @RequestBody Question question) {
+        return ResponseEntity.status(201).body(questionService.createQuestion(sessionId, question));
     }
-
-    @PostMapping("/{id}/upvote")
-    public ResponseEntity<Void> upvote(@PathVariable Long id) throws SQLException {
-        questionService.upvote(id);
+    @PatchMapping("/{id}/content")
+    public ResponseEntity<Void> updateContent(
+            @PathVariable String id,
+            @RequestBody Map<String, String> body) {
+        questionService.updateContent(id, body.get("content"));
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) throws SQLException {
-        questionService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
+    }
+    @PostMapping("/{id}/upvote")
+    public ResponseEntity<Map<String, String>> upvote(
+            @PathVariable String id){
+        questionService.upvote(id);
+        return ResponseEntity.ok(Map.of("message", "Upvote enregistré"));
     }
 }
