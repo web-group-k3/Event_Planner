@@ -30,7 +30,7 @@ public class AdminRepositoryImpl implements AdminRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error findByUsername admin", e);
+            throw new RuntimeException("Eror findByUsername admin", e);
         }
         return Optional.empty();
     }

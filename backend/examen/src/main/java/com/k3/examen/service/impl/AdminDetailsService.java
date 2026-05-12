@@ -15,10 +15,13 @@ public class AdminDetailsService implements UserDetailsService {
     private final AdminRepository adminRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+
         Admin admin = adminRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        "Admin not found : " + username));
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("Admin not found: " + username)
+                );
 
         return new org.springframework.security.core.userdetails.User(
                 admin.getUsername(),
