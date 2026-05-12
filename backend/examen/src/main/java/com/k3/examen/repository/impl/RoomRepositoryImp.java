@@ -122,16 +122,14 @@ public class RoomRepositoryImp implements RoomRepository {
         }
         return findRoomById(id).orElseThrow(() -> new RuntimeException("Room with id " + id + " not found after updating"));
     }
-    public boolean delete(String id){
+    public boolean delete(String id) {
         String sql = "DELETE FROM room WHERE id = ?";
-        try (Connection con = DatabaseConnection.getConnection()) {
-            PreparedStatement ps = con.prepareStatement(sql);
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
-            ps.executeUpdate();
             return ps.executeUpdate() > 0;
-        }
-        catch (SQLException e){
-            throw new RuntimeException("Error in deleting room" + e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting room: " + e.getMessage());
         }
     }
 

@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/sessions")
+@CrossOrigin(origins = "http://localhost:3000")
 public class SessionController {
     private final SessionService sessionService;
     public SessionController(SessionService sessionService) {

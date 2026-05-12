@@ -3,15 +3,14 @@ package com.k3.examen.controller;
 import com.k3.examen.model.Speaker;
 import com.k3.examen.service.SpeakerService;
 import com.k3.examen.service.impl.SpeakerServiceImpl;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/speakers")
+@CrossOrigin(origins = "http://localhost:3000")
 public class SpeakerController {
 
     private final SpeakerService speakerService;

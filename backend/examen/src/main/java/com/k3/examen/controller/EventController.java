@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/events")
 public class EventController {
     private final EventService eventService;
