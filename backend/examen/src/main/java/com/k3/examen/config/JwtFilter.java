@@ -1,6 +1,6 @@
 package com.k3.examen.config;
 
-import com.k3.examen.service.impl.UserDetailsServiceImpl; // ou ton UserDetailsService
+import com.k3.examen.service.impl.AdminDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +18,9 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserDetailsServiceImpl userDetailsService;
+    private final AdminDetailsService userDetailsService;
 
-    public JwtFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
+    public JwtFilter(JwtUtil jwtUtil, AdminDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
