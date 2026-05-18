@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "EventSync Backend",
+            "request": "launch",
+            "mainClass": "com.eventsync.EventSyncApplication",
+            "projectName": "eventsync-backend",
+            "env": {
+                "DB_URL": "jdbc:postgresql://localhost:5432/eventsync",
+                "DB_USERNAME": "ton_username",
+                "DB_PASSWORD": "ton_password",
+                "JWT_SECRET": "eventsync-secret-key-must-be-32-chars!!"
+            }
+        }
+    ]
+}

@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4d0413d-091a-4546-ae97-02d806de9d22" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/config/CorsConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/repository/impl/AdminRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/repository/impl/AdminRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/service/impl/AdminDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/service/impl/AdminDetailsService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +33,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
@@ -54,7 +61,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.ExamenApplication.executor": "Run",
-    "git-widget-placeholder": "develop",
+    "git-widget-placeholder": "Frontendpublic",
     "last_opened_file_path": "C:/Users/User/Event_Planner",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -71,6 +78,11 @@
     ]
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.k3.examen.config" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="Event_Planner" />
