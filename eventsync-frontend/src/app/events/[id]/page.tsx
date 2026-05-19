@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-
+import Link from "next/link";
 import { getEventById } from "@/services/event.service";
 
 import LiveBadge from "@/components/sessions/LiveBadge";
@@ -102,7 +102,24 @@ export default async function EventDetailPage({
               <span className="text-lime-400 font-semibold tracking-widest">
                 SESSIONS
               </span>
+              <Link
+  href={`/events/${event.id}/schedule`}
+  className="
+    inline-flex
+    items-center
+    justify-center
+    px-6 py-4
+    rounded-2xl
+    bg-lime-400
+    text-black
+    font-bold
+    mt-8
+  "
+>
 
+  View Schedule
+
+</Link>
               <h2 className="text-4xl font-black mt-3">
 
                 Event Sessions
@@ -118,7 +135,7 @@ export default async function EventDetailPage({
             </div>
 
           </div>
-
+          
           <div className="grid lg:grid-cols-2 gap-8">
 
             {event.sessions?.map((session) => (
