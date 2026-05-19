@@ -8,9 +8,7 @@ export default async function EventsPage() {
 
   return (
     <main className="container-app py-20">
-
-      {/* Header */}
-
+      {/*hero in the events page*/}
       <div className="mb-16">
 
         <span className="text-lime-400 font-semibold tracking-widest">
@@ -33,7 +31,7 @@ export default async function EventsPage() {
 
       </div>
 
-      {/* Grid */}
+      {/* Grid for all exesting events */}
 
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
 
