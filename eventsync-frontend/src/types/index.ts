@@ -31,3 +31,10 @@ export interface Event {
   location?: string;
   sessions?: Session[];
 }
+export interface Question {
+  id: string;
+  content: string;
+  authorName?: string;
+  upvotes: number;
+  createdAt: string;
+}
