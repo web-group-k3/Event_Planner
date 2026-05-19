@@ -48,7 +48,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/questions").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/questions/*/upvote").permitAll()
 
-                        // ── Routes protégées (admin uniquement) ───────────────────
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter,
