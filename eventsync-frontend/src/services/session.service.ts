@@ -23,3 +23,17 @@ export const getLiveSessions = async (): Promise<Session[]> => {
     (session: Session) => session.live
   );
 };
+{/*
+export const getSessionsByEvent = async (
+  eventId: string
+): Promise<Session[]> => {
+  const res = await api.get(`/sessions/byEvent/${eventId}`);
+  return res.data;
+};*/}
+
+export const getSessionsByRoom = async (
+  roomId: string
+): Promise<Session[]> => {
+  const res = await api.get(`/sessions/byRoom/${roomId}`);
+  return res.data;
+};
