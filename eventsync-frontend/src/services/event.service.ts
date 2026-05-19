@@ -16,3 +16,16 @@ export const getEventById = async (
 
   return response.data;
 };
+export const getEventsByRoom = async (
+  roomId: string
+): Promise<Event[]> => {
+  const res = await api.get(`/events/byRoom/${roomId}`);
+  return res.data;
+};
+
+export const getEventsBySpeaker = async (
+  speakerId: string
+): Promise<Event[]> => {
+  const res = await api.get(`/events/bySpeaker/${speakerId}`);
+  return res.data;
+};
