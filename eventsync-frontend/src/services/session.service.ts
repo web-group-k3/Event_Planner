@@ -7,7 +7,14 @@ export const getSessions = async (): Promise<Session[]> => {
 
   return response.data;
 };
+export const getSessionById = async (
+  id: string
+): Promise<Session> => {
 
+  const response = await api.get(`/sessions/${id}`);
+
+  return response.data;
+};
 export const getLiveSessions = async (): Promise<Session[]> => {
 
   const response = await api.get("/sessions");
