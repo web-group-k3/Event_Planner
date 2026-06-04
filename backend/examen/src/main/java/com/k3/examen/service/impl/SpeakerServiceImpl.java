@@ -9,9 +9,7 @@ import com.k3.examen.repository.SpeakerRepository;
 import com.k3.examen.service.SpeakerService;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class SpeakerServiceImpl implements SpeakerService {
@@ -43,18 +41,14 @@ public class SpeakerServiceImpl implements SpeakerService {
     @Override
     public Speaker getSpeakerWithSessions(String id) {
         Speaker speaker = getSpeakerById(id);
-        List<Session>  sessions=sessionRepository.findAll().stream()
-                .filter(s->speakerRepository.findBySessionId(s.getId())
-                        .stream().anyMatch(sp->sp.getId().equals(id)))
-                .toList();
+        // Use the dedicated query instead of O(n²) scan
+        List<Session> sessions = sessionRepository.findBySpeakerId(id);
+        speaker.setSessions(sessions);
         return speaker;
     }
 
     @Override
     public Speaker createSpeaker(Speaker speaker) {
-        if (speaker.getId() == null) {
-            throw new IllegalArgumentException("Speaker id cannot be null");
-        }
         if (speaker.getFullName() == null || speaker.getFullName().isBlank()) {
             throw new IllegalArgumentException("Speaker full name cannot be null");
         }
