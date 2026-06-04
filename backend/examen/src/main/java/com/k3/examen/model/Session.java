@@ -23,6 +23,7 @@ public class Session {
     private List<Speaker> speakers;
     private List<Question> questions;
     public boolean isLive() {
+        if (startTime == null || endTime == null) return false;
         LocalDateTime now = LocalDateTime.now();
         return now.isAfter(startTime) && now.isBefore(endTime);
     }
