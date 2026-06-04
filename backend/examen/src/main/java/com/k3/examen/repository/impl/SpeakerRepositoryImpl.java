@@ -13,10 +13,8 @@ import java.util.Optional;
 @Repository
 public class SpeakerRepositoryImpl implements SpeakerRepository {
 
-    private final DatabaseConnection databaseConnection;
-
     public SpeakerRepositoryImpl(DatabaseConnection databaseConnection) {
-        this.databaseConnection = databaseConnection;
+        // DatabaseConnection uses static methods — no instance needed
     }
 
     /** Parse string id to int — all PK/FK are INTEGER in DB */
@@ -37,11 +35,30 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     @Override
     public List<Speaker> findAll() {
         List<Speaker> list = new ArrayList<>();
-        String sql = "SELECT id, full_name, photo_url, bio, links FROM speaker ORDER BY full_name";
+        String sql = """
+            SELECT sp.id, sp.full_name, sp.photo_url, sp.bio, sp.links,
+                   COUNT(ss.session_id) AS session_count
+            FROM speaker sp
+            LEFT JOIN session_speaker ss ON ss.speaker_id = sp.id
+            GROUP BY sp.id, sp.full_name, sp.photo_url, sp.bio, sp.links
+            ORDER BY sp.full_name
+            """;
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) list.add(mapRow(rs));
+            while (rs.next()) {
+                Speaker spk = mapRow(rs);
+                // Build a minimal sessions list just to carry the count
+                int count = rs.getInt("session_count");
+                if (count > 0) {
+                    List<com.k3.examen.model.Session> placeholder = new java.util.ArrayList<>();
+                    for (int i = 0; i < count; i++) {
+                        placeholder.add(new com.k3.examen.model.Session());
+                    }
+                    spk.setSessions(placeholder);
+                }
+                list.add(spk);
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Error finding all speakers: " + e.getMessage());
         }
