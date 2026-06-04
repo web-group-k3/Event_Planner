@@ -246,6 +246,7 @@ export default function HeroSection() {
                   alt="Event"
                   fill
                   priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className={`
                     object-cover
                     absolute
