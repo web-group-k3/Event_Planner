@@ -13,6 +13,7 @@ public interface SessionRepository {
     List<Session> findByEventId(String EventId);
     List<Session> findByRoomId(String RoomId);
     List<Session> findByRoomIdAndEventId(String roomId, String eventId);
+    List<Session> findBySpeakerId(String speakerId);
     Session save(Session session);
     Session update(Session session);
     void delete(String id);
