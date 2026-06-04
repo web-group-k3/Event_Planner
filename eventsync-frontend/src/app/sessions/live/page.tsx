@@ -61,7 +61,7 @@ function SessionCard({
         {session.guestNumber != null && (
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
             <Users className="w-3.5 h-3.5" />
-            <span>{session.guestNumber} guests</span>
+            <span>Capacity: {session.guestNumber}</span>
           </div>
         )}
       </div>

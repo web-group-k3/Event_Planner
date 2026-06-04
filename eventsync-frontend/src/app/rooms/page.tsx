@@ -6,7 +6,7 @@ import { getRooms } from "@/services/room.service";
 import { getSessionsByRoom } from "@/services/session.service";
 import {
   Clock, ChevronDown, ChevronUp,
-  Wifi, Building2, Mic, Calendar, Search, X
+  Wifi, Building2, Mic, Calendar, Search, X, Users
 } from "lucide-react";
 import { format } from "date-fns";
 import SpeakerModal from "@/components/SpeakerModal";
@@ -99,7 +99,7 @@ function SessionRow({
         {session.guestNumber != null && (
           <div className="mt-3 flex items-center gap-1.5 text-xs text-gray-600">
             <Users className="w-3.5 h-3.5" />
-            <span>{session.guestNumber} guests expected</span>
+            <span>Capacity: {session.guestNumber}</span>
           </div>
         )}
 
