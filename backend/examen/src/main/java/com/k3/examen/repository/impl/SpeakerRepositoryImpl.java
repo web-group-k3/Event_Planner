@@ -48,15 +48,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Speaker spk = mapRow(rs);
-                // Build a minimal sessions list just to carry the count
-                int count = rs.getInt("session_count");
-                if (count > 0) {
-                    List<com.k3.examen.model.Session> placeholder = new java.util.ArrayList<>();
-                    for (int i = 0; i < count; i++) {
-                        placeholder.add(new com.k3.examen.model.Session());
-                    }
-                    spk.setSessions(placeholder);
-                }
+                spk.setSessionCount(rs.getInt("session_count"));
                 list.add(spk);
             }
         } catch (SQLException e) {
