@@ -2,7 +2,7 @@
 
 :root {
   --background: #050816;
-  --surface: #0f172a;
+  --surface: rgba(255, 255, 255, 0.03); /* Ton effet glass standard */
 
   --primary: #a3ff12;
   --secondary: #38bdf8;
@@ -11,81 +11,47 @@
   --text: #f8fafc;
   --muted: #94a3b8;
 
-  --border: rgba(255,255,255,0.08);
-}
-
-html {
-  scroll-behavior: smooth;
+  --border: rgba(255, 255, 255, 0.08);
 }
 
 body {
   background:
     radial-gradient(
       circle at top left,
-      rgba(163,255,18,0.08),
-      transparent 30%
+      rgba(163, 255, 18, 0.06),
+      transparent 35%
     ),
     radial-gradient(
       circle at bottom right,
-      rgba(56,189,248,0.08),
-      transparent 30%
+      rgba(56, 189, 248, 0.06),
+      transparent 35%
     ),
     var(--background);
-
   color: var(--text);
-  min-height: 100vh;
+}
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.glass {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--border);
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.container-app {
-  max-width: 1280px;
-  margin-inline: auto;
-  padding-inline: 24px;
-}
-
-.button-primary {
-  background: var(--primary);
-  color: #000;
-
-  border-radius: 18px;
-  padding: 12px 24px;
-
-  font-weight: 700;
-
-  transition: 0.3s;
-}
-
-.button-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(163,255,18,0.3);
-}
-
-.button-secondary {
-  border: 1px solid rgba(255,255,255,0.08);
-
-  border-radius: 18px;
-
-  padding: 12px 24px;
-
-  transition: 0.3s;
-}
-
-.button-secondary:hover {
-  background: rgba(255,255,255,0.04);
-}
-
-.gradient-text {
-  background: linear-gradient(
-    to right,
-    #a3ff12,
-    #38bdf8
-  );
-
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* Classes utilitaires si tu ne veux pas utiliser les crochets de Tailwind */
+.animate-slide-up {
+  animation: slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

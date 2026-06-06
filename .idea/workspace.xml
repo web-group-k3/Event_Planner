@@ -5,20 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4d0413d-091a-4546-ae97-02d806de9d22" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_02_05_2026_21_39_[Changes]/shelved.patch" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_02_05_2026_21_39__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/examen/target/classes/com/k3/examen/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/target/classes/com/k3/examen/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/examen/target/classes/com/k3/examen/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/target/classes/com/k3/examen/controller/AuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/examen/target/classes/com/k3/examen/repository/impl/AdminRepositoryImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/target/classes/com/k3/examen/repository/impl/AdminRepositoryImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/examen/target/classes/com/k3/examen/service/impl/AdminDetailsService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/target/classes/com/k3/examen/service/impl/AdminDetailsService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/repository/impl/SessionRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/src/main/java/com/k3/examen/repository/impl/SessionRepositoryImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/examen/target/classes/com/k3/examen/repository/impl/SessionRepositoryImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/examen/target/classes/com/k3/examen/repository/impl/SessionRepositoryImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/examen/target/test-classes/com/k3/examen/ExamenApplicationTests.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/app/events/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/app/events/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/app/events/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/app/events/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/app/sessions/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/app/sessions/[id]/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/components/HeroSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/components/HeroSection.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/components/Navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/components/Navbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/components/events/EventCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/components/events/EventCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/components/sessions/LiveBadge.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/components/sessions/LiveBadge.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/components/sessions/SessionCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/components/sessions/SessionCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/services/event.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/services/event.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/services/session.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/services/session.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/services/speaker.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/services/speaker.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eventsync-frontend/src/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/eventsync-frontend/src/types/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,35 +65,35 @@
     <option name="showLibraryContents" value="true" />
     <option name="showModules" value="false" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.ExamenApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Events&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/User/Event_Planner&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.ExamenApplication.executor": "Run",
+    "git-widget-placeholder": "EventPageUI",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "F:/L2/prog4/td1-prog4",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.k3.examen.config" />
@@ -212,7 +221,14 @@
       <workItem from="1777748910326" duration="2222000" />
       <workItem from="1777751164379" duration="513000" />
       <workItem from="1778999530920" duration="4076000" />
-      <workItem from="1779172164326" duration="1463000" />
+      <workItem from="1779172164326" duration="4327000" />
+      <workItem from="1779477760946" duration="17000" />
+      <workItem from="1779590246666" duration="864000" />
+      <workItem from="1779591746187" duration="2000" />
+      <workItem from="1779783676633" duration="1926000" />
+      <workItem from="1779871487174" duration="157000" />
+      <workItem from="1779871658757" duration="362000" />
+      <workItem from="1779986999254" duration="674000" />
     </task>
     <servers />
   </component>

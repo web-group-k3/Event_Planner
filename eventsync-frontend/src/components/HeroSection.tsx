@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -162,9 +162,12 @@ export default function HeroSection() {
 
             <div className="mt-10 flex flex-wrap gap-4">
 
-              <button className="button-primary">
-                Explore Events
-              </button>
+            <Link
+  href="/events"
+  className="button-primary"
+>
+  Explore Events
+</Link>
 
               <button className="button-secondary">
                 View Live Sessions

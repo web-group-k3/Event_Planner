@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ExamenApplication",
+            "request": "launch",
+            "mainClass": "com.k3.examen.ExamenApplication",
+            "projectName": "examen"
+        },
+        {
+            "type": "java",
             "name": "EventSync Backend",
             "request": "launch",
             "mainClass": "com.eventsync.EventSyncApplication",
