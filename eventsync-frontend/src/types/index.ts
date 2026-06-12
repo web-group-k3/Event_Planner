@@ -12,6 +12,7 @@ export interface Room {
 }
 
 export interface Session {
+  location: string;
   id: string;
   title: string;
   description: string;
