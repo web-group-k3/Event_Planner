@@ -139,7 +139,7 @@ export default async function SessionDetailPage({
 
               <p className="font-bold text-xl mt-3">
 
-                {session.capacity || 0}
+                {session.guestNumber || 0}
 
               </p>
 
