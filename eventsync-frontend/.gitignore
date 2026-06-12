@@ -5,6 +5,7 @@ node_modules/
 backend/*/target/
 .idea/dataSources.local.xml
 .idea/shelf/
+.idea/
 *.class
 /.pnp
 .pnp.*
