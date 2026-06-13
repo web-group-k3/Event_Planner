@@ -1,4 +1,8 @@
 export interface Speaker {
+  sessions: any;
+  sessionCount: number;
+  photoUrl: any;
+  links(links: any): unknown;
   id: string;
   fullName: string;
   bio: string;
@@ -12,6 +16,7 @@ export interface Room {
 }
 
 export interface Session {
+  guestNumber: null;
   location: string;
   id: string;
   title: string;
