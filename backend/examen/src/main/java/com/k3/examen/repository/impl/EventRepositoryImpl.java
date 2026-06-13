@@ -4,18 +4,18 @@ import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Event;
 import com.k3.examen.model.Room;
 import com.k3.examen.repository.EventRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Repository
 public class EventRepositoryImpl implements EventRepository {
-    private DatabaseConnection databaseConnection;
-    public EventRepositoryImpl(DatabaseConnection databaseConnection) {
-        this.databaseConnection = databaseConnection;
-    }
+    @Autowired
+    private DataSource dataSource;
     private Event mapRow(ResultSet rs) throws SQLException {
         return Event.builder()
                 .id(rs.getString("id"))
@@ -31,7 +31,7 @@ public class EventRepositoryImpl implements EventRepository {
     public List<Event> findAll() {
         List<Event> events = new ArrayList<>();
         String sql = "SELECT id,title, description, start_date,end_date, location FROM event ORDER BY start_date";
-       try( Connection conn = databaseConnection.getConnection()) {
+       try( Connection conn = dataSource.getConnection()) {
            PreparedStatement stmt = conn.prepareStatement(sql);
            ResultSet rs = stmt.executeQuery();
            while (rs.next()) events.add(mapRow(rs));
@@ -43,7 +43,7 @@ public class EventRepositoryImpl implements EventRepository {
     // FIND EVENT bY ID
     public Optional<Event> findById(String id)  {
         String sql = "SELECT id,title, description, start_date,end_date, location  FROM event WHERE id = ?";
-        try (Connection conn = databaseConnection.getConnection()){
+        try (Connection conn = dataSource.getConnection()){
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, id);
             try( ResultSet rs = stmt.executeQuery()) {
@@ -58,7 +58,7 @@ public class EventRepositoryImpl implements EventRepository {
     }
     public Event save(Event event)  {
         String sql = "INSERT INTO event (id,title, description, start_date, end_date, location) VALUES (?,?, ?, ?, ?, ?) ";
-        try(Connection conn = databaseConnection.getConnection()) {
+        try(Connection conn = dataSource.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, event.getId());
             stmt.setString(2, event.getTitle());
@@ -74,7 +74,7 @@ public class EventRepositoryImpl implements EventRepository {
     }
     public Event update( Event event)  {
         String sql = "UPDATE event SET title=?, description=?, start_date=?, end_date=?, location=? WHERE id=?";
-        try(Connection conn = databaseConnection.getConnection()) {
+        try(Connection conn = dataSource.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, event.getTitle());
             stmt.setString(2, event.getDescription());
@@ -90,7 +90,7 @@ public class EventRepositoryImpl implements EventRepository {
     }
     public boolean delete(String id) {
         String sql = "DELETE FROM event WHERE id = ?";
-        try (Connection conn=databaseConnection.getConnection()){
+        try (Connection conn=dataSource.getConnection()){
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, id);
             stmt.executeUpdate();
@@ -110,7 +110,7 @@ public class EventRepositoryImpl implements EventRepository {
         ORDER BY e.start_date
         """;
         List<Event> list = new ArrayList<>();
-        try (Connection conn = databaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, roomId);
             try (ResultSet rs = ps.executeQuery()) {

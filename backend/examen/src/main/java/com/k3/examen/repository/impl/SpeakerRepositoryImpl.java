@@ -4,8 +4,10 @@ import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Session;
 import com.k3.examen.model.Speaker;
 import com.k3.examen.repository.SpeakerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,10 +17,8 @@ import java.util.List;
 import java.util.Optional;
 @Repository
 public class SpeakerRepositoryImpl implements SpeakerRepository {
-    private DatabaseConnection databaseConnection;
-    public SpeakerRepositoryImpl(DatabaseConnection databaseConnection) {
-        this.databaseConnection = databaseConnection;
-    }
+    @Autowired
+    private DataSource dataSource;
     private Speaker mapRow(ResultSet rs) throws SQLException {
         return Speaker.builder()
                 .id(rs.getString("id") )
@@ -32,7 +32,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     @Override
     public List<Speaker> findAll()  {
         List<Speaker> list = new ArrayList<>();
-        try (Connection conn = databaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("SELECT id,full_name,photo_url,bio,links FROM speaker ORDER BY full_name");
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) list.add(mapRow(rs));
@@ -43,7 +43,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     }
     @Override
     public Optional<Speaker> findById(String id)  {
-        try (Connection conn = databaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("SELECT id,full_name,photo_url,bio,links FROM speaker where id = ?")) {
              ps.setString(1, id);
              try (ResultSet rs=ps.executeQuery()){
@@ -59,7 +59,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     @Override
     public Speaker save(Speaker speaker) {
         String sql = "INSERT INTO speaker (id,full_name, photo_url, bio, links) VALUES (?,?, ?, ?, ?)";
-        try (Connection conn = databaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,speaker.getId());
             ps.setString(2, speaker.getFullName());
@@ -75,7 +75,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     @Override
     public Speaker update( Speaker speaker)  {
         String sql = "UPDATE speaker SET full_name=?, photo_url=?, bio=?, links=? WHERE id=?";
-        try (Connection conn = databaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, speaker.getFullName());
             ps.setString(2, speaker.getPhotoUrl());
@@ -90,7 +90,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     }
 
     public boolean delete(String id)  {
-        try (Connection conn = databaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("DELETE FROM speaker WHERE id = ?")) {
             ps.setString(1, id);
             ps.executeUpdate();
@@ -110,7 +110,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
         ORDER BY sp.full_name
         """;
         List<Speaker> list = new ArrayList<>();
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, roomId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -133,7 +133,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
         ORDER BY sp.full_name
         """;
         List<Speaker> list = new ArrayList<>();
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, eventId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -153,7 +153,7 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
             ORDER BY s.full_name
             """;
         List<Speaker> list = new ArrayList<>();
-        try (Connection conn = databaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, sessionId);
             try (ResultSet rs = ps.executeQuery()) {

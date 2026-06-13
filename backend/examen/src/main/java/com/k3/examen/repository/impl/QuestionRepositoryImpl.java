@@ -3,18 +3,18 @@ package com.k3.examen.repository.impl;
 import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Question;
 import com.k3.examen.repository.QuestionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Repository
 public class QuestionRepositoryImpl implements QuestionRepository {
-    private final DatabaseConnection connection;
-    public QuestionRepositoryImpl(DatabaseConnection connection) {
-        this.connection = connection;
-    }
+    @Autowired
+    private DataSource dataSource;
     private Question mapRow(ResultSet rs) throws SQLException {
         return Question.builder()
                 .id(rs.getString("id"))
@@ -29,7 +29,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     public List<Question> findBySessionId(String sessionId) {
         List<Question> list = new ArrayList<>();
         String sql = "SELECT id,content,author,session_id,upvotes,created_at FROM question WHERE session_id = ? ORDER BY upvotes DESC, created_at ASC";
-        try (Connection conn = connection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, sessionId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -43,7 +43,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     @Override
     public Optional<Question> findById(String id)  {
         String sql = "SELECT id,session_id,content,author,upvotes,created_at FROM question WHERE id = ?";
-        try (Connection conn = connection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -57,7 +57,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
 
     public Question save(Question question) {
         String sql = "INSERT INTO question (id,content, session_id, author, upvotes, created_at) VALUES (?,?, ?,?, 0,NOW()) RETURNING id, created_at";
-        try (Connection conn = connection.getConnection();
+        try (Connection conn =dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,question.getId());
             ps.setString(2, question.getContent());
@@ -77,7 +77,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     @Override
     public void upvote(String id)  {
         String sql = "UPDATE question SET upvotes = upvotes + 1 WHERE id = ?";
-        try (Connection conn = connection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
              ps.setString(1, id);
              ps.executeUpdate();
@@ -88,7 +88,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     @Override
     public void delete(String id)  {
         String sql = "DELETE FROM question WHERE id = ?";
-        try (Connection conn = connection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
             ps.executeUpdate();
