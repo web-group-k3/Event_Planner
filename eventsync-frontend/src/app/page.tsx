@@ -7,7 +7,7 @@ export default function HomePage() {
     <main className="bg-[#050816] min-h-screen text-white pb-24">
       <HeroSection />
       
-      {/* Zone de test temporaire pour les composants Question & Favoris */}
+      {/* Zone de test temporaire pour les composants Question & Favoris 
       <div className="container-app mt-12 max-w-4xl mx-auto px-6">
         <div className="border border-lime-500/30 bg-lime-500/5 rounded-3xl p-6 mb-8 flex items-center justify-between">
           <div>
@@ -23,7 +23,7 @@ export default function HomePage() {
         </div>
 
         <QuestionSection sessionId="session-1" />
-      </div>
+      </div>*/}
     </main>
   );
-}
+}

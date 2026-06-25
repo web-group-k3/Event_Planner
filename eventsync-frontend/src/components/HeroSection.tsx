@@ -30,7 +30,7 @@ function Counter({
       setCount(0);
       return;
     }
-    
+
     let start = 0;
     const duration = 2000;
     const increment = target / 100;
@@ -60,8 +60,8 @@ export default function HeroSection() {
   const [currentImage, setCurrentImage] = useState(0);
 
   const [events, setEvents] = useState<Event[]>([]);
-  const [allSessions, setAllSessions] = useState<Session[]>([]); 
-  const [liveSessions, setLiveSessions] = useState<Session[]>([]); 
+  const [allSessions, setAllSessions] = useState<Session[]>([]);
+  const [liveSessions, setLiveSessions] = useState<Session[]>([]);
   const [speakers, setSpeakers] = useState<Speaker[]>([]);
 
   useEffect(() => {
@@ -80,8 +80,8 @@ export default function HeroSection() {
     try {
       const eventsData = await getEvents();
       const speakersData = await getSpeakers();
-      const sessionsData = await getLiveSessions(); 
-      
+      const sessionsData = await getLiveSessions();
+
       setAllSessions(sessionsData);
 
       const now = new Date();
@@ -96,7 +96,7 @@ export default function HeroSection() {
       setLiveSessions(currentLive);
       setSpeakers(speakersData);
     } catch (error) {
-      console.error("Erreur lors du chargement des données du Hero:", error);
+      console.error("Error during heo data fetching", error);
     }
   };
 
@@ -117,12 +117,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-20 left-20 w-72 h-72 bg-lime-400/10 blur-[120px]" />
-      <div className="absolute bottom-10 right-10 w-72 h-72 bg-sky-400/10 blur-[120px]" />
-
       <div className="container-app py-20 lg:py-28">
-        {/* TOP */}
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* LEFT */}
           <div>
@@ -146,13 +141,13 @@ export default function HeroSection() {
             </p>
 
             <div className="mt-10 flex flex-wrap gap-4">
-            <Link href="/events" className="button-primary">Explore Events</Link>
+              <Link href="/events" className="button-primary">Explore Events</Link>
               <button onClick={scrollToSchedule} className="button-secondary">
                 View Live Sessions
               </button>
             </div>
 
-            {/* Stats */}
+            {/* Stats count the existing event and speakers*/}
             <div className="mt-16 flex flex-wrap gap-10">
               <div>
                 <h2 className="text-4xl font-black">
@@ -188,9 +183,8 @@ export default function HeroSection() {
                   fill
                   priority
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className={`object-cover absolute transition-opacity duration-1000 ${
-                    currentImage === index ? "opacity-100" : "opacity-0"
-                  }`}
+                  className={`object-cover absolute transition-opacity duration-1000 ${currentImage === index ? "opacity-100" : "opacity-0"
+                    }`}
                 />
               ))}
 
@@ -199,14 +193,14 @@ export default function HeroSection() {
               <div className="absolute bottom-6 left-6 right-6">
                 <div className="glass rounded-3xl p-6">
                   {liveSessions.length > 0 ? (
-                    <Link href={`/rooms/${liveSessions[0].room || "room-alpha"}`} className="block group">
+                   <Link href={`/sessions/${liveSessions[0].id}`} className="block group">
                       <div className="flex items-center justify-between">
                         <div>
                           <h3 className="text-2xl font-black group-hover:text-lime-400 transition">
                             {liveSessions[0].title}
                           </h3>
                           <p className="text-gray-300 mt-1">
-                            {liveSessions[0].location || "Main Stage"} 
+                            {liveSessions[0].room?.id}
                           </p>
                         </div>
                         <div className="px-4 py-2 rounded-full bg-[#ff4d6d]/20 text-[#ff4d6d] text-sm font-bold animate-bounce">
@@ -249,9 +243,9 @@ export default function HeroSection() {
 
             <div className="grid md:grid-cols-3 gap-6">
               {allSessions.length > 0 ? (
-                allSessions.slice(0, 3).map((session) => {
+                allSessions.map((session) => {
                   const now = new Date();
-                  const isLive = session.startTime && session.endTime 
+                  const isLive = session.startTime && session.endTime
                     ? now >= new Date(session.startTime) && now <= new Date(session.endTime)
                     : false;
 
@@ -259,11 +253,10 @@ export default function HeroSection() {
                     <Link
                       href={`/sessions/${session.id}`}
                       key={session.id}
-                      className={`block rounded-3xl p-6 hover:scale-[1.02] transition border cursor-pointer ${
-                        isLive
-                          ? "bg-lime-400/10 border-lime-400/25 shadow-[0_0_15px_rgba(163,230,53,0.05)]"
-                          : "bg-white/5 border-white/5"
-                      }`}
+                      className={`block rounded-3xl p-6 hover:scale-[1.02] transition border cursor-pointer ${isLive
+                        ? "bg-lime-400/10 border-lime-400/25 shadow-[0_0_15px_rgba(163,230,53,0.05)]"
+                        : "bg-white/5 border-white/5"
+                        }`}
                     >
                       <div className="flex items-center justify-between">
                         <span className={`text-sm ${isLive ? "text-lime-300" : "text-sky-300"}`}>
@@ -276,7 +269,7 @@ export default function HeroSection() {
                         )}
                       </div>
                       <h3 className="text-xl font-black mt-6 truncate">{session.title}</h3>
-                      <p className="text-gray-400 mt-2">{session.location || "Room Scheduled"}</p>
+                      <p className="text-gray-400 mt-2">{session.room?.name }</p>
                     </Link>
                   );
                 })
