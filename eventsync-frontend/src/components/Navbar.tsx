@@ -25,7 +25,7 @@ export default function Navbar() {
             Events
           </Link>
           <Link
-            href="/live"
+            href="/sessions/live"
             className="text-gray-300 hover:text-white transition-colors duration-200"
           >
             Live
