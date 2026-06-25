@@ -3,6 +3,7 @@ package com.k3.examen.service.impl;
 import com.k3.examen.model.Admin;
 import com.k3.examen.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class AdminDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 admin.getUsername(),
                 admin.getPasswordHash(),
-                List.of()
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
     }
 }
