@@ -41,7 +41,7 @@ function Counter({
         setCount(target);
         clearInterval(timer);
       } else {
-        setCount(Math.floor(start));
+        setCount(Math.round(start));
       }
     }, duration / 100);
 
@@ -146,7 +146,7 @@ export default function HeroSection() {
             </p>
 
             <div className="mt-10 flex flex-wrap gap-4">
-              <button onClick={scrollToSchedule} className="button-primary">Explore Events</button>
+            <Link href="/events" className="button-primary">Explore Events</Link>
               <button onClick={scrollToSchedule} className="button-secondary">
                 View Live Sessions
               </button>
