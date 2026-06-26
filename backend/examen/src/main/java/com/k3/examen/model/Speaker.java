@@ -15,4 +15,5 @@ public class Speaker {
     private String bio;
     private String links;
     private List<Session> sessions;
+    private int sessionCount;
 }

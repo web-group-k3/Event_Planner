@@ -30,13 +30,25 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
     }
     // FIND ALL SPEAKERS
     @Override
-    public List<Speaker> findAll()  {
+    public List<Speaker> findAll() {
         List<Speaker> list = new ArrayList<>();
+        String sql = """
+        SELECT sp.id, sp.full_name, sp.photo_url, sp.bio, sp.links,
+               COUNT(ss.session_id) as session_count
+        FROM speaker sp
+        LEFT JOIN session_speakers ss ON ss.speaker_id = sp.id
+        GROUP BY sp.id, sp.full_name, sp.photo_url, sp.bio, sp.links
+        ORDER BY sp.full_name
+        """;
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT id,full_name,photo_url,bio,links FROM speaker ORDER BY full_name");
+             PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) list.add(mapRow(rs));
-        }catch (SQLException e) {
+            while (rs.next()) {
+                Speaker speaker = mapRow(rs);
+                speaker.setSessionCount((int) rs.getLong("session_count")); // ✅
+                list.add(speaker);
+            }
+        } catch (SQLException e) {
             throw new RuntimeException("Error finding all speakers " + e.getMessage());
         }
         return list;

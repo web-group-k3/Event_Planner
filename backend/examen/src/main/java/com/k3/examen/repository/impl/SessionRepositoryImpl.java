@@ -1,6 +1,7 @@
 package com.k3.examen.repository.impl;
 
 import com.k3.examen.config.DatabaseConnection;
+import com.k3.examen.model.Room;
 import com.k3.examen.model.Session;
 import com.k3.examen.model.Speaker;
 import com.k3.examen.repository.SessionRepository;
@@ -292,6 +293,64 @@ public class SessionRepositoryImpl implements SessionRepository {
 
         } catch (SQLException e) {
             throw new RuntimeException("Error findByEventIdWithSpeakers: " + e.getMessage());
+        }
+
+        return new ArrayList<>(sessionMap.values());
+    }
+    @Override
+    public List<Session> findAllWithSpeakers() {
+        String sql = """
+    SELECT s.id, s.title, s.description, s.start_time, s.end_time,
+           s.guestNumber, s.event_id, s.room_id,
+           r.id as room_id_val, r.name as room_name, r.adress as room_adress,
+           sp.id as speaker_id, sp.full_name, sp.bio
+    FROM session s
+    LEFT JOIN room r ON r.id = s.room_id
+    LEFT JOIN session_speakers ss ON ss.session_id = s.id
+    LEFT JOIN speaker sp ON sp.id = ss.speaker_id
+    ORDER BY s.start_time
+    """;
+
+        java.util.Map<String, Session> sessionMap = new java.util.LinkedHashMap<>();
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String sessionId = rs.getString("id");
+
+                if (!sessionMap.containsKey(sessionId)) {
+                    Session session = Session.builder()
+                            .id(sessionId)
+                            .title(rs.getString("title"))
+                            .description(rs.getString("description"))
+                            .startTime(rs.getTimestamp("start_time").toLocalDateTime())
+                            .endTime(rs.getTimestamp("end_time").toLocalDateTime())
+                            .guestNumber(rs.getInt("guestNumber"))
+                            .room(rs.getString("room_name") != null ? Room.builder()  // ✅
+                                    .id(rs.getString("room_id_val"))
+                                    .name(rs.getString("room_name"))
+                                    .adress(rs.getString("room_adress"))
+                                    .build() : null)
+                            .speakers(new ArrayList<>())
+                            .build();
+                    sessionMap.put(sessionId, session);
+                }
+
+                String speakerId = rs.getString("speaker_id");
+                if (speakerId != null) {
+                    Speaker speaker = Speaker.builder()
+                            .id(speakerId)
+                            .fullName(rs.getString("full_name"))
+                            .bio(rs.getString("bio"))
+                            .build();
+                    sessionMap.get(sessionId).getSpeakers().add(speaker);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error findAllWithSpeakers: " + e.getMessage());
         }
 
         return new ArrayList<>(sessionMap.values());
