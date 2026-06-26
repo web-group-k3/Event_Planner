@@ -121,32 +121,22 @@ export default function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* LEFT */}
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8">
-              <div className="w-2 h-2 rounded-full bg-[#ff4d6d] animate-pulse" />
-              <span className="text-sm text-gray-300">
-                {liveSessions.length} {liveSessions.length > 1 ? "Sessions" : "Session"} LIVE
-              </span>
-            </div>
-
             <h1 className="text-5xl lg:text-7xl font-black leading-tight">
               Synchronize
               <span className="gradient-text"> Events</span>
               <br />
               In Real Time
             </h1>
-
             <p className="mt-8 text-lg text-gray-400 leading-relaxed max-w-xl">
               Manage conferences, explore sessions, interact with speakers and participate
               in live Q&A experiences seamlessly.
             </p>
-
             <div className="mt-10 flex flex-wrap gap-4">
               <Link href="/events" className="button-primary">Explore Events</Link>
               <button onClick={scrollToSchedule} className="button-secondary">
                 View Live Sessions
               </button>
             </div>
-
             {/* Stats count the existing event and speakers*/}
             <div className="mt-16 flex flex-wrap gap-10">
               <div>
@@ -171,7 +161,6 @@ export default function HeroSection() {
               </div>
             </div>
           </div>
-
           {/* RIGHT */}
           <div className="relative">
             <div className="relative h-[500px] rounded-[36px] overflow-hidden border border-white/10 shadow-2xl">
@@ -187,9 +176,7 @@ export default function HeroSection() {
                     }`}
                 />
               ))}
-
               <div className="absolute inset-0 bg-black/50" />
-
               <div className="absolute bottom-6 left-6 right-6">
                 <div className="glass rounded-3xl p-6">
                   {liveSessions.length > 0 ? (
@@ -203,8 +190,8 @@ export default function HeroSection() {
                             {liveSessions[0].room?.id}
                           </p>
                         </div>
-                        <div className="px-4 py-2 rounded-full bg-[#ff4d6d]/20 text-[#ff4d6d] text-sm font-bold animate-bounce">
-                          JOIN LIVE
+                        <div className="px-2 py-2 rounded-full bg-[#ff4d6d]/20 text-[#ff4d6d] text-sm font-bold animate-bounce">
+                          JOIN 
                         </div>
                       </div>
                       <div className="mt-6">
@@ -226,7 +213,6 @@ export default function HeroSection() {
             </div>
           </div>
         </div>
-
         {/* BOTTOM SECTION */}
         <div id="schedule-section" className="mt-24">
           <div className="glass rounded-[36px] p-8 lg:p-10">
@@ -240,7 +226,6 @@ export default function HeroSection() {
                 {liveSessions.length} {liveSessions.length > 1 ? "Sessions" : "Session"} LIVE
               </div>
             </div>
-
             <div className="grid md:grid-cols-3 gap-6">
               {allSessions.length > 0 ? (
                 allSessions.map((session) => {
@@ -248,7 +233,6 @@ export default function HeroSection() {
                   const isLive = session.startTime && session.endTime
                     ? now >= new Date(session.startTime) && now <= new Date(session.endTime)
                     : false;
-
                   return (
                     <Link
                       href={`/sessions/${session.id}`}
@@ -262,11 +246,9 @@ export default function HeroSection() {
                         <span className={`text-sm ${isLive ? "text-lime-300" : "text-sky-300"}`}>
                           {formatTime(session.startTime)}
                         </span>
-                        {isLive && (
-                          <span className="px-2 py-1 rounded-full bg-[#ff4d6d] text-xs font-bold text-white">
-                            LIVE
-                          </span>
-                        )}
+                        <span className={`text-sm ${isLive ? "text-lime-300" : "text-sky-300"}`}>
+                          {formatTime(session.endTime)}
+                        </span>
                       </div>
                       <h3 className="text-xl font-black mt-6 truncate">{session.title}</h3>
                       <p className="text-gray-400 mt-2">{session.room?.name }</p>
@@ -281,7 +263,6 @@ export default function HeroSection() {
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );

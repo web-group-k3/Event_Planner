@@ -177,11 +177,11 @@ export default function SessionModal({
                 {session.guestNumber != null && (
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center">
-                      <Users className="w-4 h-4 text-gray-400" />
+                      <Users className="w-4 h-4 text-lime-400" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-white">{session.guestNumber}</p>
-                      <p className="text-xs text-gray-500">Capacity</p>
+                      <p className="text-xs text-gray-500">Guest Number</p>
                     </div>
                   </div>
                 )}
@@ -189,7 +189,7 @@ export default function SessionModal({
                 {(session.speakers?.length ?? 0) > 0 && (
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center">
-                      <Mic className="w-4 h-4 text-gray-400" />
+                      <Mic className="w-4 h-4 text-lime-400" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-white">{session.speakers!.length}</p>

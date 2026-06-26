@@ -1,6 +1,6 @@
 import HeroSection from "@/components/HeroSection";
-import QuestionSection from "@/components/QuestionSection";
-import FavoriteButton from "@/components/FavoriteButton";
+import QuestionSection from "@/components/sessions/QuestionSection";
+import FavoriteButton from "@/components/sessions/FavoriteButton";
 
 export default function HomePage() {
   return (

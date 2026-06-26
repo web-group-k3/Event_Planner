@@ -7,7 +7,7 @@ import { getSpeakers } from "@/services/speaker.service";
 import { X, Mic, Clock, MapPin, Users, Calendar, Wifi } from "lucide-react";
 import { format } from "date-fns";
 import { parseLinks } from "@/lib/links";
-import SessionModal from "@/components/SessionModal";
+import SessionModal from "@/components/sessions/SessionModal";
 
 interface SpeakerModalProps {
   speakerId: string | null;

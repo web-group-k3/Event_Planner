@@ -42,6 +42,18 @@ export default function Navbar() {
           >
             Rooms
           </Link>
+          <Link
+            href="/agenda"
+            className="text-gray-300 hover:text-white transition-colors duration-200"
+          >
+          Planning
+          </Link>
+          <Link
+            href="/favorites"
+            className="text-gray-300 hover:text-white transition-colors duration-200"
+          >
+          My favorites
+          </Link>
         </nav>
 
         <div className="flex items-center gap-4">
