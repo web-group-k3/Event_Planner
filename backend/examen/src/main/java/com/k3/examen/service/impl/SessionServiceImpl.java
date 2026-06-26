@@ -46,9 +46,8 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public List<Session> getAllSessions() {
-        return sessionRepository.findAll();
+        return sessionRepository.findAllWithSpeakers();
     }
-
     @Override
     public Session getSessionById(String id) {
         return sessionRepository.findById(id)

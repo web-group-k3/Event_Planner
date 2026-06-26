@@ -15,6 +15,7 @@ public interface SessionRepository {
     List<Session> findByRoomId(String RoomId);
     List<Session> findByRoomIdAndEventId(String roomId, String eventId);
     Session save(Session session);
+    List<Session> findAllWithSpeakers();
     Session update(Session session);
     void delete(String id);
     void addSpeaker(String sessionId, String speakerId);
