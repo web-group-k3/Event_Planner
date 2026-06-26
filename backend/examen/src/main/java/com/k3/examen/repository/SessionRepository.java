@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SessionRepository {
+    List<Session> findByEventIdWithSpeakers(String eventId);
     List<Session> findAll();
     void deleteSpeaker(String sessionId, String speakerId);
     Optional<Session> findById(String id);

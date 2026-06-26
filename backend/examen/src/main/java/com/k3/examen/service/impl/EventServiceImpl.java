@@ -35,9 +35,12 @@ public class EventServiceImpl implements EventService {
     }
     @Override
     public List<Event> getAllEvents() {
-        return eventRepository.findAll();
+        List<Event> events = eventRepository.findAll();
+        events.forEach(event ->
+                event.setSessions(sessionRepository.findByEventIdWithSpeakers(event.getId()))
+        );
+        return events;
     }
-
     @Override
     public Event getEventById(String id) {
         return eventRepository.findById(id)
@@ -47,7 +50,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event getEventWithSessions(String id) {
         Event event = getEventById(id);
-        event.setSessions(sessionRepository.findByEventId(id));
+        event.setSessions(sessionRepository.findByEventIdWithSpeakers(id)); // même méthode
         return event;
     }
 
