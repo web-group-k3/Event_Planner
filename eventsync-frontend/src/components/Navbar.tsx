@@ -57,16 +57,22 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <Link
-            href="/events/create"
+        <a            href="http://localhost:5173"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden sm:block px-5 py-2.5 text-sm font-semibold rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-all active:scale-95"
           >
             Create event
-          </Link>
+          </a>
 
-          <button className="button-primary px-6 py-2.5 text-sm font-semibold rounded-2xl">
+          
+           <a href="http://localhost:5173"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="button-primary px-6 py-2.5 text-sm font-semibold rounded-2xl"
+          >
             Admin Login
-          </button>
+          </a>
         </div>
 
       </div>
