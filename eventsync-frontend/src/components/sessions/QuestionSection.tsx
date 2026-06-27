@@ -6,9 +6,10 @@ import { MessageSquare, Send, Trash2, Edit2, ThumbsUp, X, Check } from "lucide-r
 
 interface QuestionSectionProps {
   sessionId: string;
+  isLive: boolean;
 }
 
-export default function QuestionSection({ sessionId }: QuestionSectionProps) {
+export default function QuestionSection({ sessionId, isLive }: QuestionSectionProps) {
   const { questions, loading, error, addQuestion, upvote, remove, updateContent } =
     useQuestions(sessionId);
 
@@ -17,20 +18,8 @@ export default function QuestionSection({ sessionId }: QuestionSectionProps) {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  // Gestion de l'édition d'une question par l'admin
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState("");
-
-  // Vérifier si l'utilisateur est admin
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    // Dans Next.js, on vérifie localStorage uniquement côté client
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsAdmin(true);
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,7 +63,6 @@ export default function QuestionSection({ sessionId }: QuestionSectionProps) {
 
   return (
     <section className="mt-12 glass rounded-3xl p-6 lg:p-8 relative overflow-hidden">
-      {/* Background glow decorator */}
       <div className="absolute top-0 right-0 w-48 h-48 bg-sky-400/5 blur-[80px] pointer-events-none" />
 
       <div className="flex items-center gap-3 mb-8">
@@ -86,56 +74,63 @@ export default function QuestionSection({ sessionId }: QuestionSectionProps) {
           <p className="text-xs text-gray-400 mt-0.5">Posez vos questions en direct à l'intervenant</p>
         </div>
       </div>
+      {isLive ? (
+        <form onSubmit={handleSubmit} className="bg-white/[0.02] border border-white/5 rounded-2xl p-5 mb-8 space-y-4">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">
+                Votre Nom
+              </label>
+              <input
+                type="text"
+                placeholder="Ex: Sophie Martin (ou Anonyme)"
+                value={authorName}
+                onChange={(e) => setAuthorName(e.target.value)}
+                className="w-full bg-black/20 text-white placeholder-gray-500 rounded-xl border border-white/10 px-4 py-3 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+              />
+            </div>
+          </div>
 
-      {/* Formulaire de soumission */}
-      <form onSubmit={handleSubmit} className="bg-white/[0.02] border border-white/5 rounded-2xl p-5 mb-8 space-y-4">
-        <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">
-              Votre Nom
+              Votre Question
             </label>
-            <input
-              type="text"
-              placeholder="Ex: Sophie Martin (ou Anonyme)"
-              value={authorName}
-              onChange={(e) => setAuthorName(e.target.value)}
-              className="w-full bg-black/20 text-white placeholder-gray-500 rounded-xl border border-white/10 px-4 py-3 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+            <textarea
+              placeholder="Posez votre question de manière claire et concise..."
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={3}
+              className="w-full bg-black/20 text-white placeholder-gray-500 rounded-xl border border-white/10 px-4 py-3 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all resize-none"
             />
           </div>
-        </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">
-            Votre Question
-          </label>
-          <textarea
-            placeholder="Posez votre question de manière claire et concise..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={3}
-            className="w-full bg-black/20 text-white placeholder-gray-500 rounded-xl border border-white/10 px-4 py-3 text-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all resize-none"
-          />
-        </div>
+          {formError && <p className="text-rose-400 text-xs font-medium">{formError}</p>}
 
-        {formError && <p className="text-rose-400 text-xs font-medium">{formError}</p>}
-
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={submitting}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-sky-500/10 cursor-pointer"
-          >
-            {submitting ? (
-              "Envoi en cours..."
-            ) : (
-              <>
-                <span>Envoyer la question</span>
-                <Send className="w-4 h-4" />
-              </>
-            )}
-          </button>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-sky-500/10 cursor-pointer"
+            >
+              {submitting ? (
+                "Envoi en cours..."
+              ) : (
+                <>
+                  <span>Envoyer la question</span>
+                  <Send className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      ) : (
+        <div className="bg-white/[0.02] border border-dashed border-white/10 rounded-2xl p-8 mb-8 text-center">
+          <MessageSquare className="w-8 h-8 text-gray-600 mx-auto mb-3" />
+          <p className="text-gray-400 text-sm font-medium">
+            Les questions ne peuvent être posées que pendant une session en direct.
+          </p>
         </div>
-      </form>
+      )}
 
       {/* Liste des questions */}
       <div className="space-y-4">
@@ -209,7 +204,6 @@ export default function QuestionSection({ sessionId }: QuestionSectionProps) {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Upvote Button */}
               <button
                 onClick={() => upvote(q.id)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-gray-400 hover:text-[#a3ff12] hover:bg-[#a3ff12]/5 border border-transparent hover:border-[#a3ff12]/10 transition-all duration-300 cursor-pointer group"
@@ -220,29 +214,26 @@ export default function QuestionSection({ sessionId }: QuestionSectionProps) {
                 </span>
               </button>
 
-              {/* Admin Actions */}
-              {isAdmin && (
-                <div className="flex gap-1 border-l border-white/10 pl-2">
-                  <button
-                    onClick={() => handleStartEdit(q.id, q.content)}
-                    className="p-2 text-gray-500 hover:text-white transition-colors cursor-pointer"
-                    title="Modifier"
-                  >
-                    <Edit2 className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (confirm("Supprimer cette question ?")) {
-                        remove(q.id);
-                      }
-                    }}
-                    className="p-2 text-gray-500 hover:text-rose-400 transition-colors cursor-pointer"
-                    title="Supprimer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              )}
+              <div className="flex gap-1 border-l border-white/10 pl-2">
+                <button
+                  onClick={() => handleStartEdit(q.id, q.content)}
+                  className="p-2 text-gray-500 hover:text-white transition-colors cursor-pointer"
+                  title="Modifier"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm("Supprimer cette question ?")) {
+                      remove(q.id);
+                    }
+                  }}
+                  className="p-2 text-gray-500 hover:text-rose-400 transition-colors cursor-pointer"
+                  title="Supprimer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </div>
         ))}

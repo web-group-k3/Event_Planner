@@ -39,16 +39,12 @@ public class SpeakerServiceImpl implements SpeakerService {
         return speakerRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Speaker not found"));
     }
-
     @Override
     public Speaker getSpeakerWithSessions(String id) {
-        Speaker speaker = getSpeakerById(id);
-        List<Session>  sessions=sessionRepository.findAll().stream()
-                .filter(s->speakerRepository.findBySessionId(s.getId())
-                        .stream().anyMatch(sp->sp.getId().equals(id)))
-                .toList();
-        return speaker;
+        return speakerRepository.findByIdWithSessions(id)
+                .orElseThrow(() -> new RuntimeException("Speaker not found"));
     }
+
 
     @Override
     public Speaker createSpeaker(Speaker speaker) {

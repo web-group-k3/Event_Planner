@@ -31,7 +31,7 @@ export default function Footer() {
               <Link href="/events" className="hover:text-white transition-colors duration-200 text-gray-400">
                 Events
               </Link>
-              <Link href="/live" className="hover:text-white transition-colors duration-200 text-gray-400 flex items-center gap-2">
+              <Link href="/sessions/live" className="hover:text-white transition-colors duration-200 text-gray-400 flex items-center gap-2">
                 Live Sessions
                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
               </Link>

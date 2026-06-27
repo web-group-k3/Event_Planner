@@ -21,4 +21,5 @@ public interface SpeakerRepository {
     boolean delete(String id);
     List<Speaker> findByRoomId(String roomId);
     List<Speaker> findByEventId(String eventId);
+    Optional<Speaker> findByIdWithSessions(String id);
 }

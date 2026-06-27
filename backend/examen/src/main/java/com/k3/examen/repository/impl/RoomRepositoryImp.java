@@ -4,8 +4,10 @@ import com.k3.examen.config.DatabaseConnection;
 import com.k3.examen.model.Room;
 import com.k3.examen.model.RoomUpdateRequest;
 import com.k3.examen.repository.RoomRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,10 +17,8 @@ import java.util.List;
 import java.util.Optional;
 @Repository
 public class RoomRepositoryImp implements RoomRepository {
-    private DatabaseConnection databaseConnection;
-    public RoomRepositoryImp(DatabaseConnection databaseConnection) {
-        this.databaseConnection = databaseConnection;
-    }
+    @Autowired
+    private DataSource dataSource;
     private Room mapRow(ResultSet rs) throws SQLException {
         return  Room.builder()
                 .id(rs.getString("id"))
@@ -33,7 +33,7 @@ public class RoomRepositoryImp implements RoomRepository {
     public List<Room> findAll() {
         List<Room> rooms = new ArrayList<>();
         String sql = "SELECT id, name, adress, capacity FROM room ORDER BY name";
-        try (Connection con = databaseConnection.getConnection()){
+        try (Connection con = dataSource.getConnection()){
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -48,7 +48,7 @@ public class RoomRepositoryImp implements RoomRepository {
     @Override
     public Optional<Room> findRoomById(String id) {
         String sql = "SELECT id, name,adress,capacity  FROM room WHERE id = ?";
-        try (Connection con = databaseConnection.getConnection()){
+        try (Connection con = dataSource.getConnection()){
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -66,7 +66,7 @@ public class RoomRepositoryImp implements RoomRepository {
     @Override
     public Room save(Room room)  {
         String sql = "INSERT INTO room (id,name,adress,capacity) VALUES (?,?,?,?) RETURNING *";
-        try (Connection con = databaseConnection.getConnection()) {
+        try (Connection con = dataSource.getConnection()) {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, room.getId());
             ps.setString(2, room.getName());
@@ -108,7 +108,7 @@ public class RoomRepositoryImp implements RoomRepository {
         sql.setLength(sql.length() - 2);
         sql.append(" WHERE id = ?");
         params.add(id);
-        try(Connection con = databaseConnection.getConnection()) {
+        try(Connection con = dataSource.getConnection()) {
             PreparedStatement ps = con.prepareStatement(sql.toString());
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
@@ -124,7 +124,7 @@ public class RoomRepositoryImp implements RoomRepository {
     }
     public boolean delete(String id){
         String sql = "DELETE FROM room WHERE id = ?";
-        try (Connection con = DatabaseConnection.getConnection()) {
+        try (Connection con = dataSource.getConnection()) {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, id);
             ps.executeUpdate();
@@ -144,7 +144,7 @@ public class RoomRepositoryImp implements RoomRepository {
         ORDER BY r.name
         """;
         List<Room> list = new ArrayList<>();
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, eventId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -166,7 +166,7 @@ public class RoomRepositoryImp implements RoomRepository {
         ORDER BY r.name
         """;
         List<Room> list = new ArrayList<>();
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, speakerId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -182,7 +182,7 @@ public class RoomRepositoryImp implements RoomRepository {
     public List<Room> findByAddress(String address) {
         String sql = "SELECT * FROM room WHERE adress ILIKE ? ORDER BY name";
         List<Room> list = new ArrayList<>();
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + address + "%");
             try (ResultSet rs = ps.executeQuery()) {

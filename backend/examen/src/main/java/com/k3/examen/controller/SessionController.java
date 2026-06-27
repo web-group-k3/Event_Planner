@@ -66,4 +66,5 @@ public class SessionController {
         sessionService.removeSpeakerFromSession(id, speakerId);
         return ResponseEntity.noContent().build();
     }
+
 }

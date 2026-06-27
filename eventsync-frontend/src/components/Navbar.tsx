@@ -25,7 +25,7 @@ export default function Navbar() {
             Events
           </Link>
           <Link
-            href="/live"
+            href="/sessions/live"
             className="text-gray-300 hover:text-white transition-colors duration-200"
           >
             Live
@@ -41,6 +41,18 @@ export default function Navbar() {
             className="text-gray-300 hover:text-white transition-colors duration-200"
           >
             Rooms
+          </Link>
+          <Link
+            href="/agenda"
+            className="text-gray-300 hover:text-white transition-colors duration-200"
+          >
+          Planning
+          </Link>
+          <Link
+            href="/favorites"
+            className="text-gray-300 hover:text-white transition-colors duration-200"
+          >
+          My favorites
           </Link>
         </nav>
 

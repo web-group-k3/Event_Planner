@@ -3,11 +3,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Speaker, Session } from "@/types";
-import { getSpeakers } from "@/services/speaker.service";
+import { getSpeakerById} from "@/services/speaker.service";
 import { X, Mic, Clock, MapPin, Users, Calendar, Wifi } from "lucide-react";
 import { format } from "date-fns";
 import { parseLinks } from "@/lib/links";
-import SessionModal from "@/components/SessionModal";
+import SessionModal from "@/components/sessions/SessionModal";
 
 interface SpeakerModalProps {
   speakerId: string | null;
@@ -97,13 +97,13 @@ export default function SpeakerModal({ speakerId, onClose, zIndex = 100 }: Speak
     setSpeaker(null);
     setVisible(false);
 
-    getSpeakers(speakerId)
-      .then((data) => {
-        setSpeaker(data[0] || null);
-        requestAnimationFrame(() => setVisible(true));
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    getSpeakerById(speakerId)
+  .then((data) => {
+    setSpeaker(data); 
+    requestAnimationFrame(() => setVisible(true));
+  })
+  .catch(console.error)
+  .finally(() => setLoading(false));
   }, [speakerId]);
 
   if (!speakerId || !mounted) return null;
@@ -123,10 +123,7 @@ export default function SpeakerModal({ speakerId, onClose, zIndex = 100 }: Speak
       className={`fixed inset-0 flex items-center justify-center transition-all duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
       style={{ zIndex }}
     >
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={handleClose} />
-
-      {/* Panel */}
       <div
         className={`
           relative w-full h-full md:h-auto md:max-h-[92vh]
@@ -140,7 +137,6 @@ export default function SpeakerModal({ speakerId, onClose, zIndex = 100 }: Speak
           background: "radial-gradient(circle at top right, rgba(56,189,248,0.06), transparent 50%), radial-gradient(circle at bottom left, rgba(163,255,18,0.06), transparent 50%), #050816"
         }}
       >
-        {/* Close button */}
         <button
           onClick={handleClose}
           className="absolute top-6 right-6 z-10 w-10 h-10 rounded-full glass border border-white/10
@@ -149,8 +145,6 @@ export default function SpeakerModal({ speakerId, onClose, zIndex = 100 }: Speak
         >
           <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-200" />
         </button>
-
-        {/* Loading state */}
         {loading && (
           <div className="flex-1 flex items-center justify-center min-h-[400px]">
             <div className="flex flex-col items-center gap-4">
@@ -159,16 +153,14 @@ export default function SpeakerModal({ speakerId, onClose, zIndex = 100 }: Speak
             </div>
           </div>
         )}
-
-        {/* Content state */}
         {!loading && speaker && (
-          <div className="flex-1 overflow-y-auto">
-            {/* Hero Section */}
+          <div
+          className="flex-1 overflow-y-auto"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}
+        >
             <div className="relative px-8 pt-10 pb-8 border-b border-white/5">
               <div className="absolute top-0 right-0 w-80 h-80 bg-[#38bdf8]/5 blur-[100px] pointer-events-none" />
               <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
-
-                {/* Avatar */}
                 <div className="relative shrink-0">
                   <div className="w-28 h-28 rounded-3xl overflow-hidden bg-gradient-to-br from-[#a3ff12]/20 to-[#38bdf8]/20 border border-white/10 flex items-center justify-center shadow-2xl">
                     {speaker.photoUrl ? (
@@ -184,8 +176,6 @@ export default function SpeakerModal({ speakerId, onClose, zIndex = 100 }: Speak
                     </div>
                   )}
                 </div>
-
-                {/* Info & Social links */}
                 <div className="flex-1 min-w-0">
                   <h2 className="text-3xl md:text-4xl font-black text-white leading-tight">{speaker.fullName}</h2>
 
@@ -208,8 +198,6 @@ export default function SpeakerModal({ speakerId, onClose, zIndex = 100 }: Speak
                       ))}
                     </div>
                   )}
-
-                  {/* Stats Counter */}
                   <div className="mt-5 flex flex-wrap gap-6">
                     <div className="flex items-center gap-2 text-sm">
                       <div className="w-8 h-8 rounded-xl bg-[#a3ff12]/10 flex items-center justify-center">
@@ -244,18 +232,13 @@ export default function SpeakerModal({ speakerId, onClose, zIndex = 100 }: Speak
                 </div>
               </div>
             </div>
-
-            {/* Grid Layout Layout for Bio and Sessions */}
             <div className="px-8 py-8 grid md:grid-cols-5 gap-8">
-              {/* Biography component */}
               <div className="md:col-span-2">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">About</h3>
                 <p className="text-gray-300 leading-relaxed text-sm">
                   {speaker.bio || "No biography available for this speaker."}
                 </p>
               </div>
-
-              {/* Related Sessions lists */}
               <div className="md:col-span-3">
                 {liveSessions.length > 0 && (
                   <div className="mb-8">
@@ -291,8 +274,6 @@ export default function SpeakerModal({ speakerId, onClose, zIndex = 100 }: Speak
           </div>
         )}
       </div>
-
-      {/* Sub-Modal for specific single session details */}
       <SessionModal
         sessionId={selectedSessionId}
         onClose={() => setSelectedSessionId(null)}

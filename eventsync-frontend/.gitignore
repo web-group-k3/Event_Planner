@@ -44,3 +44,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# Java
+backend/examen/target/
+backend/.idea/
+
+# Node
+node_modules/
+eventsync-frontend/.next/

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { Speaker } from "@/types";
 import { getSpeakers } from "@/services/speaker.service";
-import SpeakerCard from "@/components/SpeakerCard";
-import SpeakerModal from "@/components/SpeakerModal";
+import SpeakerCard from "@/components/speakers/SpeakerCard";
+import SpeakerModal from "@/components/speakers/SpeakerModal";
 import { Search, Mic, SlidersHorizontal, X } from "lucide-react";
 
 export default function SpeakersPage() {
@@ -42,20 +42,13 @@ export default function SpeakersPage() {
 
   return (
     <div className="relative min-h-screen">
-
-      {/* Background glows */}
       <div className="fixed top-10 left-0 w-96 h-96 bg-lime-400/6 blur-[140px] pointer-events-none" />
       <div className="fixed bottom-0 right-0 w-96 h-96 bg-sky-400/6 blur-[140px] pointer-events-none" />
 
       <div className="container-app py-16">
-
-        {/* Header */}
         <div className="mb-14">
 
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-white/10 mb-6">
-            <Mic className="w-3.5 h-3.5 text-[#a3ff12]" />
-            <span className="text-sm text-gray-300">Our Speakers</span>
-          </div>
+          
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
 
@@ -80,8 +73,6 @@ export default function SpeakersPage() {
           </div>
 
         </div>
-
-        {/* Search bar */}
         <div className="relative mb-10 max-w-xl">
 
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -123,8 +114,6 @@ export default function SpeakersPage() {
             ))}
           </div>
         )}
-
-        {/* Grid */}
         {!loading && filtered.length > 0 && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {filtered.map((speaker) => (
@@ -136,8 +125,6 @@ export default function SpeakersPage() {
             ))}
           </div>
         )}
-
-        {/* Empty state */}
         {!loading && filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-32 text-center">
             <div className="w-20 h-20 rounded-3xl glass border border-white/10 flex items-center justify-center mb-6">
@@ -157,8 +144,6 @@ export default function SpeakersPage() {
         )}
 
       </div>
-
-      {/* Speaker detail modal */}
       <SpeakerModal
         speakerId={selectedId}
         onClose={() => setSelectedId(null)}

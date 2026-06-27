@@ -1,4 +1,3 @@
-// src/hooks/useFavorite.ts
 
 import { useState, useEffect } from "react";
 import { isFavorite, toggleFavorite, FavoriteType } from "@/lib/favorites";
