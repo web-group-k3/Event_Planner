@@ -1,6 +1,7 @@
 package com.k3.examen.repository.impl;
 
 import com.k3.examen.config.DatabaseConnection;
+import com.k3.examen.model.Room;
 import com.k3.examen.model.Session;
 import com.k3.examen.model.Speaker;
 import com.k3.examen.repository.SpeakerRepository;
@@ -66,7 +67,65 @@ public class SpeakerRepositoryImpl implements SpeakerRepository {
         }
         return Optional.empty();
     }
+    public Optional<Speaker> findByIdWithSessions(String id) {
+        String sql = """
+        SELECT sp.id, sp.full_name, sp.photo_url, sp.bio, sp.links,
+               s.id as session_id, s.title as session_title, s.description as session_desc,
+               s.start_time, s.end_time, s.guestNumber,
+               r.id as room_id_val, r.name as room_name, r.adress as room_adress
+        FROM speaker sp
+        LEFT JOIN session_speakers ss ON ss.speaker_id = sp.id
+        LEFT JOIN session s ON s.id = ss.session_id
+        LEFT JOIN room r ON r.id = s.room_id
+        WHERE sp.id = ?
+        ORDER BY s.start_time
+        """;
 
+        Speaker[] result = {null};
+        List<Session> sessions = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    if (result[0] == null) {
+                        result[0] = Speaker.builder()
+                                .id(rs.getString("id"))
+                                .fullName(rs.getString("full_name"))
+                                .photoUrl(rs.getString("photo_url"))
+                                .bio(rs.getString("bio"))
+                                .links(rs.getString("links"))
+                                .build();
+                    }
+                    String sessionId = rs.getString("session_id");
+                    if (sessionId != null) {
+                        Session session = Session.builder()
+                                .id(sessionId)
+                                .title(rs.getString("session_title"))
+                                .description(rs.getString("session_desc"))
+                                .startTime(rs.getTimestamp("start_time").toLocalDateTime())
+                                .endTime(rs.getTimestamp("end_time").toLocalDateTime())
+                                .guestNumber(rs.getInt("guestNumber"))
+                                .room(rs.getString("room_name") != null ? Room.builder()
+                                        .id(rs.getString("room_id_val"))
+                                        .name(rs.getString("room_name"))
+                                        .adress(rs.getString("room_adress"))
+                                        .build() : null)
+                                .build();
+                        sessions.add(session);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error findByIdWithSessions: " + e.getMessage());
+        }
+
+        if (result[0] == null) return Optional.empty();
+        result[0].setSessions(sessions);
+        result[0].setSessionCount(sessions.size());
+        return Optional.of(result[0]);
+    }
     // CREATE NEW SPEAKER
     @Override
     public Speaker save(Speaker speaker) {
