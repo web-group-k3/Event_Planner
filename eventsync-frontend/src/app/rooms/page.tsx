@@ -156,11 +156,19 @@ function RoomCard({
                 </span>
               )}
             </div>
+
             <div className="flex flex-wrap gap-4 mt-2">
               <div className="flex items-center gap-1.5 text-xs text-gray-500">
                 <Calendar className="w-3.5 h-3.5 text-gray-600" />
                 <span>{sessions.length} session{sessions.length !== 1 ? "s" : ""}</span>
               </div>
+          
+              {room.capacity != null && room.capacity > 0 && (
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <Users className="w-3.5 h-3.5 text-white" />
+                  <span className="text-lime-400 txt-xl">{room.capacity} places</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -216,7 +224,7 @@ function RoomCard({
       )}
     </div>
   );
-}export default function RoomsPage() {
+} export default function RoomsPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [filtered, setFiltered] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
@@ -235,6 +243,19 @@ function RoomCard({
       r.name.toLowerCase().includes(q)
     ));
   }, [search, rooms]);
+  useEffect(() => {
+    if (loading) return;
+
+    const hash = window.location.hash.slice(1);
+    setTimeout(() => {
+      const el = document.getElementById(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        el.classList.add("ring-2", "ring-lime-400/50");
+        setTimeout(() => el.classList.remove("ring-2", "ring-lime-400/50"), 2000);
+      }
+    }, 300);
+  }, [loading]);
   return (
     <div className="relative min-h-screen">
       <div className="fixed top-20 right-0 w-96 h-96 bg-sky-400/06 blur-[140px] pointer-events-none" />
@@ -305,12 +326,13 @@ function RoomCard({
         {!loading && filtered.length > 0 && (
           <div className="space-y-5">
             {filtered.map((room) => (
-              <RoomCard
-                key={room.id}
-                room={room}
-                onSessionClick={setSelectedSessionId}
-                onSpeakerClick={setSelectedSpeakerId}
-              />
+              <div key={room.id} id={room.id}>
+                <RoomCard
+                  room={room}
+                  onSessionClick={setSelectedSessionId}
+                  onSpeakerClick={setSelectedSpeakerId}
+                />
+              </div>
             ))}
           </div>
         )}

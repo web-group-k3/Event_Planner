@@ -13,6 +13,7 @@ export interface Room {
   id: string;
   name: string;
   adress: string;
+  capacity?: number;
 }
 
 export interface Session {

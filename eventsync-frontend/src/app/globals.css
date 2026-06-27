@@ -85,7 +85,13 @@ body {
     #a3ff12,
     #38bdf8
   );
-
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
