@@ -26,6 +26,8 @@ public class SessionRepositoryImpl implements SessionRepository {
                 .startTime(rs.getTimestamp("start_time").toLocalDateTime())
                 .endTime(rs.getTimestamp("end_time").toLocalDateTime())
                 .guestNumber(rs.getInt("guestNumber"))
+                .roomId(rs.getString("room_id"))
+                .eventId(rs.getString("event_id"))
                 .build();
     }
     // FIND ALL SESSION
@@ -179,20 +181,67 @@ public class SessionRepositoryImpl implements SessionRepository {
     }
 
     @Override
-    public Optional<Session> findById(String id)  {
-        String sql = "SELECT id,title,description,start_time,end_time,guestNumber FROM session WHERE id = ? ORDER BY start_time";
-        try(Connection conn= dataSource.getConnection()) {
-            PreparedStatement ps=conn.prepareStatement(sql);
+    public Optional<Session> findById(String id) {
+        String sql = """
+        SELECT s.id, s.title, s.description, s.start_time, s.end_time,
+               s.guestNumber, s.event_id, s.room_id,
+               r.id as room_id_val, r.name as room_name, r.adress as room_adress,
+               sp.id as speaker_id, sp.full_name, sp.bio, sp.photo_url, sp.links
+        FROM session s
+        LEFT JOIN room r ON r.id = s.room_id
+        LEFT JOIN session_speakers ss ON ss.session_id = s.id
+        LEFT JOIN speaker sp ON sp.id = ss.speaker_id
+        WHERE s.id = ?
+        """;
+
+        java.util.Map<String, Session> sessionMap = new java.util.LinkedHashMap<>();
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, id);
-            try(ResultSet rs=ps.executeQuery()){
-                if (rs.next()) return Optional.of(mapRow(rs));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String sessionId = rs.getString("id");
+
+                    if (!sessionMap.containsKey(sessionId)) {
+                        Session session = Session.builder()
+                                .id(sessionId)
+                                .title(rs.getString("title"))
+                                .description(rs.getString("description"))
+                                .startTime(rs.getTimestamp("start_time").toLocalDateTime())
+                                .endTime(rs.getTimestamp("end_time").toLocalDateTime())
+                                .guestNumber(rs.getInt("guestNumber"))
+                                .room(rs.getString("room_name") != null ? Room.builder()
+                                        .id(rs.getString("room_id_val"))
+                                        .name(rs.getString("room_name"))
+                                        .adress(rs.getString("room_adress"))
+                                        .build() : null)
+                                .speakers(new ArrayList<>())
+                                .build();
+                        sessionMap.put(sessionId, session);
+                    }
+
+                    String speakerId = rs.getString("speaker_id");
+                    if (speakerId != null) {
+                        Speaker speaker = Speaker.builder()
+                                .id(speakerId)
+                                .fullName(rs.getString("full_name"))
+                                .bio(rs.getString("bio"))
+                                .photoUrl(rs.getString("photo_url"))
+                                .links(rs.getString("links"))
+                                .build();
+                        sessionMap.get(sessionId).getSpeakers().add(speaker);
+                    }
+                }
             }
-        }catch (
-                SQLException e
-        ){
-            throw new RuntimeException("Error finding session by id " + id +e.getMessage());
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error findById session: " + e.getMessage());
         }
-        return Optional.empty();
+
+        return sessionMap.isEmpty() ? Optional.empty() : Optional.of(sessionMap.values().iterator().next());
     }
     @Override
     public boolean existsConflictInRoom(String roomId, LocalDateTime startTime, LocalDateTime endTime, String excludeSessionId) {

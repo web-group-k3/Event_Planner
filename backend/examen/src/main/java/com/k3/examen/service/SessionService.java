@@ -10,7 +10,7 @@ public interface SessionService {
 
     Session getSessionById(String id);
 
-    Session getSessionDetail(String id);          // avec room + speakers + questions
+    Session getSessionDetail(String id);
 
     List<Session> getSessionsByEvent(String eventId);
 

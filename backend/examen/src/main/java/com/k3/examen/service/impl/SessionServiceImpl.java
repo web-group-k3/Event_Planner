@@ -57,8 +57,6 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public Session getSessionDetail(String id) {
         Session session = getSessionById(id);
-        session.setRoom(roomRepository.findRoomById(session.getRoomId()).orElse(null));
-        session.setSpeakers(speakerRepository.findBySessionId(id));
         session.setQuestions(questionRepository.findBySessionId(id));
         return session;
     }
