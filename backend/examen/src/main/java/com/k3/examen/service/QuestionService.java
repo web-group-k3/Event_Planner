@@ -11,4 +11,5 @@ public interface QuestionService {
     void upvote(String questionId);
     void deleteQuestion(String id);
     void updateContent(String id, String newContent);
+    void upvote(String questionId, String anonymousId, String fingerprintId);
 }

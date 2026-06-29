@@ -63,4 +63,16 @@ public class QuestionServiceImpl implements QuestionService {
                 .orElseThrow(() -> new ResourceNotFoundException("question not found: " + id));
         questionRepository.updateContent(id, newContent);
     }
+    @Override
+    public void upvote(String questionId, String anonymousId, String fingerprintId) {
+        questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found: " + questionId));
+
+        if (questionRepository.hasVoted(questionId, anonymousId, fingerprintId)) {
+            throw new IllegalStateException("Vous avez déjà voté pour cette question");
+        }
+
+        questionRepository.addVote(questionId, anonymousId, fingerprintId);
+        questionRepository.upvote(questionId);
+    }
 }

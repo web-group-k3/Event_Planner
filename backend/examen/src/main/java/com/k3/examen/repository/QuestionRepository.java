@@ -12,4 +12,6 @@ public interface QuestionRepository {
     void upvote(String id);
     void delete(String id);
     void updateContent(String id, String newContent);
+    boolean hasVoted(String questionId, String anonymousId, String fingerprintId);
+    void addVote(String questionId, String anonymousId, String fingerprintId);
 }

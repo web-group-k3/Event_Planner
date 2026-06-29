@@ -1,6 +1,7 @@
 
 package com.k3.examen.controller;
 
+import com.k3.examen.exception.ResourceNotFoundException;
 import com.k3.examen.model.Question;
 import com.k3.examen.service.QuestionService;
 import com.k3.examen.service.impl.QuestionServiceImpl;
@@ -47,10 +48,53 @@ public class QuestionController {
         questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
     }
-    @PostMapping("/{id}/upvote")
+   /* @PostMapping("/{id}/upvote")
     public ResponseEntity<Map<String, String>> upvote(
             @PathVariable String id){
         questionService.upvote(id);
         return ResponseEntity.ok(Map.of("message", "Upvote enregistré"));
+    }*/
+   // Trouve cette méthode dans ton QuestionController.java et remplace-la par celle-ci :
+   @PostMapping("/questions/{id}/upvote")
+   public ResponseEntity<?> upvote(
+           @PathVariable String id,
+           @RequestHeader(value = "X-Anonymous-Id", required = false) String anonymousId,
+           @RequestHeader(value = "X-Fingerprint", required = false) String fingerprintId
+   ) {
+       // 1. On bloque DIRECTEMENT si le frontend n'envoie rien d'exploitable
+       if ((anonymousId == null || anonymousId.isBlank()) && (fingerprintId == null || fingerprintId.isBlank())) {
+           return ResponseEntity.badRequest()
+                   .body(Map.of("error", "Identifiant anonyme ou empreinte de l'appareil requis"));
+       }
+
+       // 2. Si c'est bon, on continue la logique habituelle
+       try {
+           questionService.upvote(id, anonymousId, fingerprintId);
+           return ResponseEntity.ok().build();
+       } catch (IllegalStateException e) {
+           return ResponseEntity.status(409)
+                   .body(Map.of("error", e.getMessage()));
+       } catch (ResourceNotFoundException e) {
+           return ResponseEntity.notFound().build();
+       }
+   }
+
+    @PostMapping("/sessions/{sessionId}/questions")
+    public ResponseEntity<?> createQuestion(
+            @PathVariable String sessionId,
+            @RequestBody Question question,
+            @RequestHeader(value = "X-Anonymous-Id", required = false) String anonymousId
+    ) {
+        if (anonymousId == null || anonymousId.isBlank()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Identifiant anonyme requis"));
+        }
+        try {
+            return ResponseEntity.ok(
+                    questionService.createQuestion(sessionId, question)
+            );
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 }
