@@ -44,4 +44,5 @@ export interface Question {
   authorName?: string;
   upvotes: number;
   createdAt: string;
+  hasVoted: boolean;
 }
