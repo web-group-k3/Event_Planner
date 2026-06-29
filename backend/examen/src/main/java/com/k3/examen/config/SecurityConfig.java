@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/questions").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/questions/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/questions/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/questions/*/upvote").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/questions/**").permitAll()
 
                         .anyRequest().authenticated()
                 )

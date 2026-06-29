@@ -109,6 +109,52 @@ public class QuestionRepositoryImpl implements QuestionRepository {
             throw new RuntimeException("Error updateContent question" + e.getMessage());
         }
     }
+    @Override
+    public boolean hasVoted(String questionId, String anonymousId, String fingerprintId) {
+        String sql = """
+    SELECT 1 FROM question_votes
+    WHERE question_id = ?
+    AND (anonymous_voter_id = ? OR fingerprint_id = ?)
+    LIMIT 1
+    """;
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
+            ps.setString(1, questionId);
+            ps.setString(2, (anonymousId != null && !anonymousId.isBlank()) ? anonymousId : "NON_SPECIFIE");
+            ps.setString(3, (fingerprintId != null && !fingerprintId.isBlank()) ? fingerprintId : "NON_SPECIFIE");
 
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la vérification hasVoted : " + e.getMessage());
+        }
+    }
+    @Override
+    public void addVote(String questionId, String anonymousId, String fingerprintId) {
+        String sql = """
+        INSERT INTO question_votes (
+            question_id,
+            anonymous_voter_id,
+            fingerprint_id,
+            created_at
+        )
+        VALUES (?, ?, ?, NOW())
+        """;
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, questionId);
+            ps.setString(2, (anonymousId != null && !anonymousId.isBlank()) ? anonymousId : null);
+            ps.setString(3, (fingerprintId != null && !fingerprintId.isBlank()) ? fingerprintId : null);
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur SQL lors de addVote : " + e.getMessage());
+        }
+    }
 }

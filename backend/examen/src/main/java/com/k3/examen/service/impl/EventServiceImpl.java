@@ -3,16 +3,19 @@ package com.k3.examen.service.impl;
 import com.k3.examen.dto.EventDto;
 import com.k3.examen.exception.ResourceNotFoundException;
 import com.k3.examen.model.Event;
+import com.k3.examen.model.Session;
 import com.k3.examen.repository.EventRepository;
 import com.k3.examen.repository.RoomRepository;
 import com.k3.examen.repository.SessionRepository;
 import com.k3.examen.repository.SpeakerRepository;
 import com.k3.examen.service.EventService;
 import com.k3.examen.validator.EventValidator;
+import com.k3.examen.validator.SessionValidator;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,16 +25,19 @@ public class EventServiceImpl implements EventService {
     private final SessionRepository sessionRepository;
     private final RoomRepository roomRepository;
     private final SpeakerRepository speakerRepository;
+    private final SessionValidator sessionValidator;
+
     public EventServiceImpl(EventRepository eventRepository,
                             EventValidator eventValidator,
                             SessionRepository sessionRepository,
                             RoomRepository roomRepository,
-                            SpeakerRepository speakerRepository) {
+                            SpeakerRepository speakerRepository, SessionValidator sessionValidator) {
         this.eventRepository = eventRepository;
         this.sessionRepository = sessionRepository;
         this.eventValidator = eventValidator;
         this.roomRepository     = roomRepository;
         this.speakerRepository  = speakerRepository;
+        this.sessionValidator = sessionValidator;
     }
     @Override
     public List<Event> getAllEvents() {
@@ -57,7 +63,18 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event createEvent(Event event) {
         eventValidator.validate(event);
-        return eventRepository.save(event);
+        eventRepository.save(event);
+        if(event.getSessions() != null) {
+            for(Session session : event.getSessions()) {
+                session.setId(UUID.randomUUID().toString());
+                session.setEventId(event.getId());
+                sessionValidator.validate(session);
+                sessionRepository.save(session);
+
+            }
+        }
+        event.setSessions(sessionRepository.findByEventIdWithSpeakers(event.getId()));
+        return event;
     }
 
     @Override

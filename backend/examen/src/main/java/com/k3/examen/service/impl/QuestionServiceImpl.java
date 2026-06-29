@@ -24,8 +24,28 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> getQuestionsBySession(String sessionId) {
-        return questionRepository.findBySessionId(sessionId);
+    public List<Question> getQuestionsBySession(
+            String sessionId,
+            String anonymousId,
+            String fingerprintId
+    ) {
+
+        List<Question> questions =
+                questionRepository.findBySessionId(sessionId);
+
+        for (Question q : questions) {
+
+            boolean voted =
+                    questionRepository.hasVoted(
+                            q.getId(),
+                            anonymousId,
+                            fingerprintId
+                    );
+
+            q.setHasVoted(voted);
+        }
+
+        return questions;
     }
 
     @Override
@@ -62,5 +82,17 @@ public class QuestionServiceImpl implements QuestionService {
         questionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("question not found: " + id));
         questionRepository.updateContent(id, newContent);
+    }
+    @Override
+    public void upvote(String questionId, String anonymousId, String fingerprintId) {
+        questionRepository.findById(questionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found: " + questionId));
+
+        if (questionRepository.hasVoted(questionId, anonymousId, fingerprintId)) {
+            throw new IllegalStateException("Vous avez déjà voté pour cette question");
+        }
+
+        questionRepository.addVote(questionId, anonymousId, fingerprintId);
+        questionRepository.upvote(questionId);
     }
 }

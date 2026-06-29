@@ -76,21 +76,34 @@ export function useQuestions(sessionId: string) {
   };
 
   const upvote = async (id: string) => {
-    try {
-      await upvoteQuestion(id);
-      if (isMounted.current) {
-        setQuestions((prev) =>
-          prev
-            .map((q) => (q.id === id ? { ...q, upvotes: q.upvotes + 1 } : q))
-            .sort((a, b) => {
-              if (b.upvotes !== a.upvotes) return b.upvotes - a.upvotes;
-              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            })
-        );
-      }
-    } catch (err) {
-      console.error("Erreur lors du upvote:", err);
+    await upvoteQuestion(id);
+  
+    if (isMounted.current) {
+      setQuestions((prev) =>
+        prev
+          .map((q) =>
+            q.id === id
+              ? {
+                  ...q,
+                  upvotes: q.upvotes + 1,
+                  hasVoted: true,
+                }
+              : q
+          )
+          .sort((a, b) => {
+            if (b.upvotes !== a.upvotes) {
+              return b.upvotes - a.upvotes;
+            }
+            return (
+              new Date(b.createdAt).getTime() -
+              new Date(a.createdAt).getTime()
+            );
+          })
+      );
     }
+  
+    // Recharge depuis le backend pour être sûr d'avoir les vraies valeurs
+    fetchQuestions(true);
   };
 
   const remove = async (id: string) => {

@@ -15,6 +15,7 @@ public class Question {
     private Integer upvotes;
     private LocalDateTime createdAt;
     private String sessionId;
+    private boolean hasVoted;
 
 
 }
