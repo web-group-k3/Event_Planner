@@ -24,8 +24,28 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> getQuestionsBySession(String sessionId) {
-        return questionRepository.findBySessionId(sessionId);
+    public List<Question> getQuestionsBySession(
+            String sessionId,
+            String anonymousId,
+            String fingerprintId
+    ) {
+
+        List<Question> questions =
+                questionRepository.findBySessionId(sessionId);
+
+        for (Question q : questions) {
+
+            boolean voted =
+                    questionRepository.hasVoted(
+                            q.getId(),
+                            anonymousId,
+                            fingerprintId
+                    );
+
+            q.setHasVoted(voted);
+        }
+
+        return questions;
     }
 
     @Override

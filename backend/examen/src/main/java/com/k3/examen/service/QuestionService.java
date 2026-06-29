@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public interface QuestionService {
-    List<Question> getQuestionsBySession(String sessionId);
+    List<Question> getQuestionsBySession(String sessionId,String anonymousId,
+                                         String fingerprintId);
     Question createQuestion(String sessionId, Question question);
     void upvote(String questionId);
     void deleteQuestion(String id);

@@ -25,8 +25,24 @@ public class QuestionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Question>> getBySession(@RequestParam String sessionId) {
-        return ResponseEntity.ok(questionService.getQuestionsBySession(sessionId));
+    public ResponseEntity<List<Question>> getBySession(
+            @RequestParam String sessionId,
+            @RequestHeader(value="X-Anonymous-Id",required=false)
+            String anonymousId,
+
+            @RequestHeader(value="X-Fingerprint",required=false)
+            String fingerprintId
+    ) {
+
+        return ResponseEntity.ok(
+
+                questionService.getQuestionsBySession(
+                        sessionId,
+                        anonymousId,
+                        fingerprintId
+                )
+
+        );
     }
 
     @PostMapping
