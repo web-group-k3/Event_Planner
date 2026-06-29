@@ -18,7 +18,6 @@ public class CorsConfig {
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
                 "http://localhost:5173"
-
         ));
         configuration.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
@@ -27,9 +26,10 @@ public class CorsConfig {
                 "Authorization",
                 "Content-Type",
                 "Accept",
-                "X-Anonymous-Id",
-                "X-Fingerprint"
+                "Range"
+
         ));
+        configuration.setExposedHeaders(List.of("X-Total-Count","Content-Range"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
