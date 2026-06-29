@@ -26,7 +26,9 @@ public class CorsConfig {
         configuration.setAllowedHeaders(List.of(
                 "Authorization",
                 "Content-Type",
-                "Accept"
+                "Accept",
+                "X-Anonymous-Id",
+                "X-Fingerprint"
         ));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);

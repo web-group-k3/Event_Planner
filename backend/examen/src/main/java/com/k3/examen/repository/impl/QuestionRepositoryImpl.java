@@ -112,45 +112,49 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     @Override
     public boolean hasVoted(String questionId, String anonymousId, String fingerprintId) {
         String sql = """
-        SELECT 1 FROM question_votes
-        WHERE question_id = ?
-        AND (anonymous_voter_id = ? OR fingerprint_id = ?)
-        LIMIT 1
-        """;
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, questionId);
-            ps.setString(2, anonymousId != null ? anonymousId : "");
-            ps.setString(3, fingerprintId != null ? fingerprintId : "");
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error hasVoted: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void addVote(String questionId, String anonymousId, String fingerprintId) {
-        // On ajoute explicitement la colonne 'id' et 'created_at' dans l'insert
-        String sql = """
-    INSERT INTO question_votes (id, question_id, anonymous_voter_id, fingerprint_id, created_at)
-    VALUES (?, ?, ?, ?, NOW())
+    SELECT 1 FROM question_votes
+    WHERE question_id = ?
+    AND (anonymous_voter_id = ? OR fingerprint_id = ?)
+    LIMIT 1
     """;
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            // On génère un UUID aléatoire pour la clé primaire de la table des votes
-            ps.setString(1, java.util.UUID.randomUUID().toString());
-            ps.setString(2, questionId);
-            ps.setString(3, anonymousId);
-            ps.setString(4, fingerprintId);
+            ps.setString(1, questionId);
+            ps.setString(2, (anonymousId != null && !anonymousId.isBlank()) ? anonymousId : "NON_SPECIFIE");
+            ps.setString(3, (fingerprintId != null && !fingerprintId.isBlank()) ? fingerprintId : "NON_SPECIFIE");
 
-            ps.executeUpdate();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement du vote en BDD : " + e.getMessage());
+            throw new RuntimeException("Erreur lors de la vérification hasVoted : " + e.getMessage());
         }
     }
+    @Override
+    public void addVote(String questionId, String anonymousId, String fingerprintId) {
+        String sql = """
+        INSERT INTO question_votes (
+            question_id,
+            anonymous_voter_id,
+            fingerprint_id,
+            created_at
+        )
+        VALUES (?, ?, ?, NOW())
+        """;
 
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
+            ps.setString(1, questionId);
+            ps.setString(2, (anonymousId != null && !anonymousId.isBlank()) ? anonymousId : null);
+            ps.setString(3, (fingerprintId != null && !fingerprintId.isBlank()) ? fingerprintId : null);
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur SQL lors de addVote : " + e.getMessage());
+        }
+    }
 }

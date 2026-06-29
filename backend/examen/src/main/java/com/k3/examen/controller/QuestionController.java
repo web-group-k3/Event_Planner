@@ -54,20 +54,19 @@ public class QuestionController {
         questionService.upvote(id);
         return ResponseEntity.ok(Map.of("message", "Upvote enregistré"));
     }*/
-   // Trouve cette méthode dans ton QuestionController.java et remplace-la par celle-ci :
-   @PostMapping("/questions/{id}/upvote")
+
+   @PostMapping("/{id}/upvote")
    public ResponseEntity<?> upvote(
            @PathVariable String id,
            @RequestHeader(value = "X-Anonymous-Id", required = false) String anonymousId,
            @RequestHeader(value = "X-Fingerprint", required = false) String fingerprintId
    ) {
-       // 1. On bloque DIRECTEMENT si le frontend n'envoie rien d'exploitable
+
        if ((anonymousId == null || anonymousId.isBlank()) && (fingerprintId == null || fingerprintId.isBlank())) {
            return ResponseEntity.badRequest()
                    .body(Map.of("error", "Identifiant anonyme ou empreinte de l'appareil requis"));
        }
 
-       // 2. Si c'est bon, on continue la logique habituelle
        try {
            questionService.upvote(id, anonymousId, fingerprintId);
            return ResponseEntity.ok().build();
